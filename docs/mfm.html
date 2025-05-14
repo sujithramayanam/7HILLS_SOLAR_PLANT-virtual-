@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather - 7Hills Solar Plant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://etimg.etb2bimg.com/thumb/msid-120365306,imgsize-124956,width-1200,height=765,overlay-etenergy/power/eesl-rolls-out-solar-micro-cold-storage-units-to-tackle-farm-level-losses-pilot-launched-in-himachal-pradesh.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateX(-3px);
+        }
+
+        .header-title {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            border-left: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .menu-title {
+            color: #4CAF50;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-item {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .menu-item i {
+            width: 20px;
+        }
+
+        .weather-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .weather-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weather-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .weather-value {
+            font-size: 0.9rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            margin: 2rem 0;
+        }
+
+        .summary-metric {
+            text-align: center;
+            padding: 0 2rem;
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .summary-metric:last-child {
+            border-right: none;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        .strings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-top: 2rem;
+            padding: 0.5rem;
+        }
+
+        .string-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .string-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .string-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .string-title {
+            color: #4CAF50;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .string-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+        .string-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.6rem;
+            border-radius: 8px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 0.4rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .metric-value {
+            font-size: 1rem;
+            color: #4CAF50;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .weather-details-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .parameter-category {
+            margin-bottom: 2rem;
+        }
+
+        .parameter-category h2 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            font-size: 1.5rem;
+        }
+
+        .parameters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .parameter-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .parameter-card:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .parameter-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .parameter-value {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .mfm-btn {
+            background: #222;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            margin: 0 0.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .mfm-btn.active, .mfm-btn:focus {
+            background: #4CAF50;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="login.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </a>
+                </div>
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <h1 class="header-title" style="margin-bottom: 0.5rem;">Multi Functioning Meter</h1>
+        </div>
+
+        <div class="menu" id="menu">
+            <div class="menu-header">
+                <div class="menu-title">Menu</div>
+                <button class="close-btn" onclick="toggleMenu()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-items">
+                <a href="login.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="solar_panels.html" class="menu-item">
+                    <i class="fas fa-solar-panel"></i>
+                    Solar Panels
+                </a>
+                <a href="inverters.html" class="menu-item">
+                    <i class="fas fa-bolt"></i>
+                    Inverters
+                </a>
+                <a href="mfm.html" class="menu-item">
+                    <i class="fas fa-microchip"></i>
+                    MFM
+                </a>
+                <a href="weather.html" class="menu-item">
+                    <i class="fas fa-cloud-sun"></i>
+                    Weather
+                </a>
+                <a href="alerts.html" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    Alerts
+                </a>
+                
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+            <button class="mfm-btn active" id="mfm-btn-1" onclick="selectMFM(1)">MFM 1</button>
+            <button class="mfm-btn" id="mfm-btn-2" onclick="selectMFM(2)">MFM 2</button>
+            <button class="mfm-btn" id="mfm-btn-3" onclick="selectMFM(3)">MFM 3</button>
+            <button class="mfm-btn" id="mfm-btn-4" onclick="selectMFM(4)">MFM 4</button>
+            <button class="mfm-btn" id="mfm-btn-5" onclick="selectMFM(5)">MFM 5</button>
+        </div>
+
+        <div class="weather-details-container">
+            <!-- Basic Electrical Parameters -->
+            <div class="parameter-category">
+                <h2>Basic Electrical Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Voltage (Line-to-Line)</div>
+                        <div class="parameter-value" id="voltage_ll_value">-- V</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Voltage (Line-to-Neutral)</div>
+                        <div class="parameter-value" id="voltage_ln_value">-- V</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Current (Per Phase)</div>
+                        <div class="parameter-value" id="current_phase_value">-- A</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Active Power (P)</div>
+                        <div class="parameter-value" id="active_power_value">-- kW</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Reactive Power (Q)</div>
+                        <div class="parameter-value" id="reactive_power_value">-- kVAR</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Apparent Power (S)</div>
+                        <div class="parameter-value" id="apparent_power_value">-- kVA</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Power Factor (PF)</div>
+                        <div class="parameter-value" id="power_factor_value">--</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Frequency (f)</div>
+                        <div class="parameter-value" id="frequency_value">-- Hz</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Phase Angle (θ)</div>
+                        <div class="parameter-value" id="phase_angle_value">-- °</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total Energy (E)</div>
+                        <div class="parameter-value" id="total_energy_value">-- kWh</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power Quality and Harmonics -->
+            <div class="parameter-category">
+                <h2>Power Quality and Harmonics</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total Harmonic Distortion (THD)</div>
+                        <div class="parameter-value" id="thd_value">-- %</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Voltage THD (VTHD)</div>
+                        <div class="parameter-value" id="vthd_value">-- %</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Current THD (ITHD)</div>
+                        <div class="parameter-value" id="ithd_value">-- %</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Energy Parameters -->
+            <div class="parameter-category">
+                <h2>Energy Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total Active Energy (Import/Export)</div>
+                        <div class="parameter-value" id="total_active_energy_value">-- kWh</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total Reactive Energy (Import/Export)</div>
+                        <div class="parameter-value" id="total_reactive_energy_value">-- kVARh</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Apparent Energy</div>
+                        <div class="parameter-value" id="apparent_energy_value">-- kVAh</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Environmental and System Health Parameters -->
+            <div class="parameter-category">
+                <h2>Environmental and System Health Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Temperature (Ambient)</div>
+                        <div class="parameter-value" id="temp_ambient_mfm_value">-- °C</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Temperature (Module)</div>
+                        <div class="parameter-value" id="temp_module_mfm_value">-- °C</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Irradiance (G)</div>
+                        <div class="parameter-value" id="irradiance_mfm_value">-- W/m²</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Wind Speed (WS)</div>
+                        <div class="parameter-value" id="wind_speed_mfm_value">-- m/s</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Efficiency (η)</div>
+                        <div class="parameter-value" id="efficiency_mfm_value">-- %</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu functionality
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // API configurations
+        const LATITUDE = 28.7041;  // Site latitude (e.g., Delhi)
+        const LONGITUDE = 77.1025; // Site longitude (e.g., Delhi)
+        const NMOT = 42;  // °C (Nominal Module Operating Temperature)
+        const AREA = 100;         // Solar panel area in m²
+        const EFFICIENCY = 0.18;  // Panel efficiency (18%)
+        const VLL_CONST = 400; // Line-to-line voltage in V
+        const PF_CONST = 0.9;   // Assume a typical power factor
+        const FREQUENCY_CONST = 50; // System operating frequency in Hz
+        const HARMONIC_ORDERS = [2, 3, 5, 7, 9, 11]; // Harmonic orders for THD simulation
+
+        // --- Energy accumulation variables (global) ---
+        let activeEnergy_kWh = 0;
+        let reactiveEnergy_kVARh = 0;
+        let apparentEnergy_kVAh = 0;
+        const samplingInterval = 5; // seconds, matches setInterval(fetchWeatherData, 5000)
+
+        // Function to calculate VTHD using waveform and FFT (matching Python logic)
+        function calculateVTHD_FFT({samplingRate = 5000, fundamentalFreq = 50, duration = 1, V1_amp = 230, V3_amp = 30, V5_amp = 15}) {
+            const n = Math.floor(samplingRate * duration);
+            const t = Array.from({length: n}, (_, i) => i / samplingRate);
+            // Generate waveform
+            const V1 = t.map(time => V1_amp * Math.sin(2 * Math.PI * fundamentalFreq * time));
+            const V3 = t.map(time => V3_amp * Math.sin(2 * Math.PI * 3 * fundamentalFreq * time));
+            const V5 = t.map(time => V5_amp * Math.sin(2 * Math.PI * 5 * fundamentalFreq * time));
+            const voltage_waveform = V1.map((v, i) => v + V3[i] + V5[i]);
+
+            // FFT (simple DFT for demonstration, not optimized)
+            function fftMag(signal) {
+                const N = signal.length;
+                const re = new Array(N).fill(0);
+                const im = new Array(N).fill(0);
+                for (let k = 0; k < N; k++) {
+                    for (let n = 0; n < N; n++) {
+                        const angle = (2 * Math.PI * k * n) / N;
+                        re[k] += signal[n] * Math.cos(angle);
+                        im[k] -= signal[n] * Math.sin(angle);
+                    }
+                }
+                return re.map((r, i) => Math.sqrt(r * r + im[i] * im[i]) / N);
+            }
+            const fft_values = fftMag(voltage_waveform);
+            const frequencies = Array.from({length: n}, (_, i) => i * samplingRate / n);
+            const half = Math.floor(n / 2);
+            const positive_frequencies = frequencies.slice(0, half);
+            const positive_fft_values = fft_values.slice(0, half);
+
+            // Find index for fundamental
+            const idx_fund = positive_frequencies.findIndex(f => Math.abs(f - fundamentalFreq) < 1e-6);
+            const V1_rms = positive_fft_values[idx_fund] * Math.sqrt(2);
+            // Harmonics: all above fundamental
+            const harmonics_rms = Math.sqrt(positive_fft_values.slice(idx_fund + 1).reduce((sum, v) => sum + v * v, 0)) * Math.sqrt(2);
+            const VTHD = (V1_rms > 0) ? (harmonics_rms / V1_rms) * 100 : 0;
+            return VTHD;
+        }
+
+        // Helper function to set text content or '--' if value is undefined/null
+        function setText(id, value, unit = '', precision = 1) {
+            const element = document.getElementById(id);
+            if (element) {
+                if (value !== undefined && value !== null && !isNaN(value)) {
+                    element.textContent = `${Number(value).toFixed(precision)} ${unit}`;
+                } else if (value !== undefined && value !== null && unit === '') { // For string values like '--' or pre-formatted text
+                     element.textContent = `${value}`;
+                }
+                else {
+                    element.textContent = `-- ${unit.trim()}`;
+                }
+            }
+        }
+
+        async function fetchWeatherData() {
+            console.log('fetchWeatherData for MFM started');
+            let ambientTemp = null;
+            let windSpeed = null;
+            let currentGhi = null; // This will be our 'G' for irradiance
+
+            // --- Irradiance Calculation (match solar_panels.html) ---
+            // Fetch weather data from OpenWeatherMap API for temperature, cloud cover, wind speed
+            let temperature = null;
+            let cloudCover = null;
+            let irradiance = null;
+            try {
+                const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${LATITUDE}&lon=${LONGITUDE}&appid=d09e3f6cf27f9110507e1a88f3bab5c8&units=metric`);
+                const weatherData = await weatherResponse.json();
+                temperature = weatherData.main.temp;
+                cloudCover = weatherData.clouds.all;
+                windSpeed = weatherData.wind.speed;
+            } catch (e) {
+                console.warn('Weather API fetch failed, using fallback values.');
+                temperature = ambientTemp ?? 25;
+                cloudCover = 0;
+                windSpeed = windSpeed ?? 2;
+            }
+            // Calculate IST time
+            const now = new Date();
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const istTimeEpoch = now.getTime() + istOffset;
+            const dateForIST = new Date(istTimeEpoch);
+            const hour = dateForIST.getUTCHours();
+            const minute = dateForIST.getUTCMinutes();
+            const timeOfDay = hour + minute / 60;
+            // Calculate time of day factor (0 at 6 AM, 1 at noon, 0 at 6 PM)
+            let timeOfDayFactor;
+            if (timeOfDay < 6 || timeOfDay > 18) {
+                timeOfDayFactor = 0;
+            } else {
+                timeOfDayFactor = Math.sin(Math.PI * (timeOfDay - 6) / 12);
+            }
+            // Clear sky irradiance
+            const clearSkyIrradiance = 1000;
+            irradiance = clearSkyIrradiance * timeOfDayFactor;
+            // Use this irradiance value for all further calculations
+            currentGhi = irradiance;
+
+            try {
+                const forecastParams = [
+                    'temperature_2m', 'shortwave_radiation', 'windspeed_10m' 
+                ];
+                const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current_weather=true&hourly=${forecastParams.join(',')}&temperature_unit=celsius&windspeed_unit=ms&precipitation_unit=mm&timezone=auto`;
+                
+                const forecastResponse = await fetch(forecastUrl).catch(e => { console.error('Open-Meteo Forecast API fetch error:', e); return { json: () => Promise.resolve(null), ok: false, statusText: e.message }; });
+
+                const forecastData = forecastResponse.ok ? await forecastResponse.json() : null;
+
+                const findCurrentHourIndex = (apiHourlyTimes) => {
+                    if (!apiHourlyTimes || apiHourlyTimes.length === 0) return -1;
+                    const nowDate = new Date();
+                    for (let i = apiHourlyTimes.length - 1; i >= 0; i--) {
+                        if (new Date(apiHourlyTimes[i]) <= nowDate) return i;
+                    }
+                    return -1;
+                };
+                
+                let currentHourIndexForecast = -1;
+                if (forecastData && forecastData.hourly && forecastData.hourly.time) {
+                    currentHourIndexForecast = findCurrentHourIndex(forecastData.hourly.time);
+                }
+
+                // Extract weather data for MFM calculations
+                if (forecastData && forecastData.current_weather) {
+                    const cw = forecastData.current_weather;
+                    ambientTemp = cw.temperature;
+                    windSpeed = cw.windspeed;
+                }
+                
+                if (forecastData && forecastData.hourly && currentHourIndexForecast !== -1) {
+                    const h = forecastData.hourly;
+                    if (ambientTemp === null && h.temperature_2m) ambientTemp = h.temperature_2m[currentHourIndexForecast];
+                    if (windSpeed === null && h.windspeed_10m) windSpeed = h.windspeed_10m[currentHourIndexForecast];
+                }
+
+                if (ambientTemp === null) { 
+                    ambientTemp = 15 + 15 * Math.sin(Math.PI * (timeOfDay - 6) / 18); 
+                    console.warn("Using fallback Ambient Temperature calculation.");
+                }
+                if (windSpeed === null) { 
+                    windSpeed = 2; 
+                     console.warn("Using fallback Wind Speed.");
+                }
+
+                // --- PV Module Specifications (from solar_panels.html) ---
+                const PV_RATED_POWER = 325;  // W (Power per module)
+                const Vmp = 37.7;  // V (Voltage at maximum power per module)
+                const Imp = 8.89;  // A (Current at maximum power per module)
+                const NMOT = 42;  // °C (Nominal Module Operating Temperature)
+                const TEMP_COEFF_PMAX = -0.0043;  // per °C (Power Temperature Coefficient)
+                const TEMP_COEFF_VOC = -0.0028;  // per °C (Voltage Temperature Coefficient)
+                const MODULES_PER_STRING = 40;  // 40 modules per string
+                const NUM_STRINGS = 120;  // 120 strings (same as NUM_STRINGS_PER_INVERTER)
+
+                const deltaT = (NMOT - 20) / 800 * currentGhi;
+                const cellTemp = ambientTemp + deltaT;
+                const temperatureDifference = cellTemp - 25;
+                const voltageTempLoss = 1 + (TEMP_COEFF_VOC * temperatureDifference);
+                const irradianceRatio = currentGhi / 1000;
+                let irradianceFactor;
+                if (irradianceRatio >= 1.0) irradianceFactor = 1.0;
+                else if (irradianceRatio >= 0.5) irradianceFactor = 0.5 + (irradianceRatio - 0.5) * 0.5;
+                else irradianceFactor = 0.1 + (irradianceRatio - 0.1) * 0.4;
+                const effectiveVoltagePerModule = Vmp * voltageTempLoss * irradianceFactor;
+                const totalVoltage = effectiveVoltagePerModule * MODULES_PER_STRING;
+                const powerTempLoss = 1 + (TEMP_COEFF_PMAX * temperatureDifference);
+                const effectivePowerPerModule = PV_RATED_POWER * irradianceRatio * powerTempLoss;
+                const totalPowerW = effectivePowerPerModule * MODULES_PER_STRING * NUM_STRINGS;
+                const P_kW = totalPowerW / 1000; // Convert to kW
+
+                const v_ab = totalVoltage * 2.2;
+                const v_bc = totalVoltage * 2.2;
+                const v_ca = totalVoltage * 2.2;
+                const avg_vl = (v_ab + v_bc + v_ca) / 3;
+                const vln = avg_vl / Math.sqrt(3);
+                setText('voltage_ll_value', avg_vl, 'V', 2);
+                setText('voltage_ln_value', vln, 'V', 2);
+
+                const G = currentGhi; 
+                const Ta = ambientTemp; 
+                const WS = windSpeed; 
+
+                setText('irradiance_mfm_value', G, 'W/m²');
+                setText('temp_ambient_mfm_value', Ta, '°C');
+                setText('wind_speed_mfm_value', WS, 'm/s');
+                setText('efficiency_mfm_value', EFFICIENCY * 100, '%', 0);
+
+                if (G !== null && Ta !== null) {
+                    let I = 0;
+                    if (avg_vl > 0 && PF_CONST > 0) { 
+                        I = (P_kW * 1000) / (Math.sqrt(3) * avg_vl * PF_CONST); 
+                    }
+                    setText('current_phase_value', I, 'A', 2);
+                    
+                    const theta_rad = Math.acos(PF_CONST);
+                    const Q_kVAR = P_kW * Math.tan(theta_rad);
+                    setText('reactive_power_value', Q_kVAR, 'kVAR', 2);
+
+                    const S_kVA = Math.sqrt(Math.pow(P_kW, 2) + Math.pow(Q_kVAR, 2));
+                    setText('apparent_power_value', S_kVA, 'kVA', 2);
+
+                    setText('power_factor_value', PF_CONST, '', 2);
+                    setText('frequency_value', FREQUENCY_CONST, 'Hz', 0);
+
+                    const theta_deg = (theta_rad * 180) / Math.PI;
+                    setText('phase_angle_value', theta_deg, '°', 2);
+
+                    const E_kWh = P_kW * 1; 
+                    setText('total_energy_value', E_kWh, 'kWh', 2);
+
+                    const deltaT = (NMOT - 20) / 800 * G;
+                    const moduleTempCalc = Ta + deltaT;
+                    setText('temp_module_mfm_value', moduleTempCalc, '°C');
+
+                    const vthd_fft = calculateVTHD_FFT({});
+                    setText('vthd_value', vthd_fft, '%', 2);
+                    const V1_fundamental = vln;
+                    const I1_fundamental = I;
+                    const voltageHarmonics = HARMONIC_ORDERS.map(() => (Math.random() * 0.04 + 0.01) * V1_fundamental);
+                    const currentHarmonics = HARMONIC_ORDERS.map(() => (Math.random() * 0.04 + 0.01) * I1_fundamental);
+                    const ithd = calculateTHD(I1_fundamental, currentHarmonics);
+                    setText('ithd_value', ithd, '%', 2);
+                    setText('thd_value', vthd_fft, '%', 2);
+
+                    activeEnergy_kWh += P_kW * (samplingInterval / 3600);
+                    reactiveEnergy_kVARh += Q_kVAR * (samplingInterval / 3600);
+                    apparentEnergy_kVAh += S_kVA * (samplingInterval / 3600);
+
+                    setText('total_active_energy_value', activeEnergy_kWh, 'kWh', 3);
+                    setText('total_reactive_energy_value', reactiveEnergy_kVARh, 'kVARh', 3);
+                    setText('apparent_energy_value', apparentEnergy_kVAh, 'kVAh', 3);
+
+                    // --- Power Calculations (matching provided Python logic) ---
+                    // Use avg_vl (line-to-line voltage), I (per-phase current), PF_CONST
+                    let active_power = 0, reactive_power = 0, apparent_power = 0;
+                    if (avg_vl > 0 && I > 0 && PF_CONST > 0) {
+                        active_power = Math.sqrt(3) * avg_vl * I * PF_CONST;
+                        const phi = Math.acos(PF_CONST);
+                        reactive_power = Math.sqrt(3) * avg_vl * I * Math.sin(phi);
+                        apparent_power = Math.sqrt(3) * avg_vl * I;
+                    }
+                    setText('active_power_value', active_power / 1000, 'kW', 2); // Convert W to kW
+                    setText('reactive_power_value', reactive_power / 1000, 'kVAR', 2); // Convert VAR to kVAR
+                    setText('apparent_power_value', apparent_power / 1000, 'kVA', 2); // Convert VA to kVA
+                } else {
+                    console.warn("Could not perform MFM calculations due to missing G or Ta.");
+                    setText('active_power_value', '--', 'kW');
+                    setText('voltage_ll_value', avg_vl, 'V', 2); 
+                    setText('voltage_ln_value', vln, 'V', 2); 
+                    setText('current_phase_value', '--', 'A');
+                    setText('reactive_power_value', '--', 'kVAR');
+                    setText('apparent_power_value', '--', 'kVA');
+                    setText('power_factor_value', PF_CONST, '', 2); 
+                    setText('frequency_value', FREQUENCY_CONST, 'Hz', 0); 
+                    setText('phase_angle_value', '--', '°');
+                    setText('total_energy_value', '--', 'kWh');
+                    setText('temp_module_mfm_value', '--', '°C');
+                }
+
+                setText('max_demand_value', '--', 'kW');
+                setText('avg_demand_value', '--', 'kW');
+                setText('load_factor_value', '--');
+            } catch (error) {
+                console.error('Critical error in fetchWeatherData (MFM) function:', error);
+                const mfmParamIds = [
+                    'voltage_ll_value', 'voltage_ln_value', 'current_phase_value', 'active_power_value',
+                    'reactive_power_value', 'apparent_power_value', 'power_factor_value', 'frequency_value',
+                    'phase_angle_value', 'total_energy_value', 'thd_value', 'vthd_value', 'ithd_value',
+                    'total_active_energy_value', 'total_reactive_energy_value', 'apparent_energy_value',
+                    'max_demand_value', 'avg_demand_value', 'load_factor_value', 'temp_ambient_mfm_value',
+                    'temp_module_mfm_value', 'irradiance_mfm_value', 'wind_speed_mfm_value', 'efficiency_mfm_value'
+                ];
+                mfmParamIds.forEach(id => {
+                    let unit = '';
+                    if (id.includes('voltage')) unit = 'V';
+                    else if (id.includes('current')) unit = 'A';
+                    else if (id.includes('power_value') || id.includes('demand_value')) unit = 'kW';
+                    else if (id.includes('reactive_power_value')) unit = 'kVAR';
+                    else if (id.includes('apparent_power_value')) unit = 'kVA';
+                    else if (id.includes('energy_value')) unit = 'kWh';
+                    else if (id.includes('reactive_energy_value')) unit = 'kVARh';
+                    else if (id.includes('apparent_energy_value')) unit = 'kVAh';
+                    else if (id.includes('frequency')) unit = 'Hz';
+                    else if (id.includes('angle')) unit = '°';
+                    else if (id.includes('temp')) unit = '°C';
+                    else if (id.includes('irradiance')) unit = 'W/m²';
+                    else if (id.includes('wind_speed')) unit = 'm/s';
+                    else if (id.includes('thd') || id.includes('efficiency')) unit = '%';
+                    setText(id, '--', unit, (id.includes('factor') || id.includes('efficiency')) ? 2 : 0);
+                });
+            }
+        }
+
+        function calculateTHD(fundamental, harmonics) {
+            if (fundamental === 0) return 0; 
+            const harmonicSumSquared = harmonics.reduce((sum, h) => sum + Math.pow(h, 2), 0);
+            const thd = (Math.sqrt(harmonicSumSquared) / fundamental) * 100;
+            return thd;
+        }
+
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        function calculateSolarAngles(latitude, longitude, dateAtLocation, utcOffsetSeconds) {
+            if (!dateAtLocation || utcOffsetSeconds === undefined || utcOffsetSeconds === null) {
+                return { zenith: null, azimuth: null };
+            }
+            try {
+                const N = getDayOfYear(dateAtLocation);
+                const toRadians = (degrees) => degrees * Math.PI / 180;
+                const toDegrees = (radians) => radians * 180 / Math.PI;
+                const B_deg = (360 / 365) * (N - 81);
+                const delta_deg = 23.44 * Math.sin(toRadians(B_deg));
+                const delta_rad = toRadians(delta_deg);
+                const EoT_min = 9.87 * Math.sin(toRadians(2 * B_deg)) - 7.53 * Math.cos(toRadians(B_deg)) - 1.5 * Math.sin(toRadians(B_deg));
+                const TZ_hours = utcOffsetSeconds / 3600;
+                const stdMeridian_deg = 15 * TZ_hours;
+                const utcTime = new Date(dateAtLocation.getTime() - utcOffsetSeconds * 1000);
+                const utcHourDecimal = utcTime.getUTCHours() + utcTime.getUTCMinutes() / 60 + utcTime.getUTCSeconds() / 3600;
+                const lambda_deg = longitude;
+                const LST_hours = utcHourDecimal + TZ_hours + ((4 * (lambda_deg - stdMeridian_deg) + EoT_min) / 60);
+                const H_deg = 15 * (LST_hours - 12);
+                const H_rad = toRadians(H_deg);
+                const phi_rad = toRadians(latitude);
+                let cos_theta_zenith = Math.sin(phi_rad) * Math.sin(delta_rad) + Math.cos(phi_rad) * Math.cos(delta_rad) * Math.cos(H_rad);
+                cos_theta_zenith = Math.max(-1, Math.min(1, cos_theta_zenith));
+                const theta_zenith_rad = Math.acos(cos_theta_zenith);
+                const theta_zenith_deg = toDegrees(theta_zenith_rad);
+                let solar_azimuth_deg = null;
+                if (theta_zenith_deg <= 89.9) {
+                    let val_for_asin = (-Math.cos(delta_rad) * Math.sin(H_rad)) / Math.cos(theta_zenith_rad); 
+                    val_for_asin = Math.max(-1, Math.min(1, val_for_asin));
+                    const az_raw_rad = Math.asin(val_for_asin);
+                    const az_raw_deg = toDegrees(az_raw_rad);
+                    solar_azimuth_deg = (180 - az_raw_deg + 360) % 360;
+                }
+                return { zenith: theta_zenith_deg, azimuth: solar_azimuth_deg };
+            } catch (e) {
+                console.error("Error calculating solar angles:", e);
+                return { zenith: null, azimuth: null };
+            }
+        }
+        
+        function calculateAirDensity(temp_c, pressure_hPa, rh_percentage) {
+            if (temp_c === null || pressure_hPa === null || rh_percentage === null) return null;
+            try {
+                const temp_k = temp_c + 273.15;
+                const pressure_pa = pressure_hPa * 100;
+                const rh = rh_percentage / 100;
+                const p_sat = 610.94 * Math.exp((17.625 * temp_c) / (temp_c + 243.04));
+                const p_v = rh * p_sat;
+                const p_d = pressure_pa - p_v;
+                const R_d = 287.05;
+                const R_v = 461.5;
+                const air_density_calc = (p_d / (R_d * temp_k)) + (p_v / (R_v * temp_k));
+                return parseFloat(air_density_calc.toFixed(3));
+            } catch (e) { console.error("Error calculating air density:", e); return null; }
+        }
+
+        function calculateRainProbability(temp_c, dew_point_c, rh_percentage) {
+             if (temp_c === null || dew_point_c === null || rh_percentage === null) return null;
+            try {
+                let confidence;
+                const rh = rh_percentage;
+                if (rh > 80 && temp_c - dew_point_c < 2) confidence = 0.9;
+                else if (rh > 60 && temp_c - dew_point_c < 4) confidence = 0.6;
+                else if (rh > 40 && temp_c - dew_point_c < 6) confidence = 0.3;
+                else confidence = 0.1;
+                const area_coverage = rh / 100;
+                const pop = confidence * area_coverage;
+                return parseFloat((pop * 100).toFixed(2));
+            } catch (e) { console.error("Error calculating rain probability:", e); return null; }
+        }
+
+        function calculateAbsoluteHumidity(temp_c, rh_percentage) {
+            if (temp_c === null || rh_percentage === null) return null;
+            try {
+                const temp_k = temp_c + 273.15;
+                const rh_decimal = rh_percentage / 100;
+                const p_sat = 610.94 * Math.exp((17.625 * temp_c) / (temp_c + 243.04));
+                const ah_calc = (216.7 * p_sat * rh_decimal) / temp_k;
+                return parseFloat(ah_calc.toFixed(2));
+            } catch (e) { console.error("Error calculating absolute humidity:", e); return null; }
+        }
+
+        function selectMFM(idx) {
+            for (let i = 1; i <= 5; ++i) {
+                document.getElementById(`mfm-btn-${i}`).classList.toggle('active', i === idx);
+            }
+            // All MFMs show the same values, so no data update is needed
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            selectMFM(1);
+            fetchWeatherData();
+            setInterval(fetchWeatherData, 5000);
+        });
+    </script>
+</body>
+</html>

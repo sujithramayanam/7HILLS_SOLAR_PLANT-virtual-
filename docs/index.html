@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7Hills Solar Plant - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                        url('https://images.unsplash.com/photo-1613665813446-82a78c468a1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .scrolling-text {
+            background: rgba(28, 35, 43, 0.7);
+            padding: 1rem 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .scrolling-text span {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+            color: #4CAF50;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .hero-section {
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+            animation: fadeIn 2s ease-in;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeIn 2s ease-in 0.5s backwards;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, rgba(76, 175, 80, 0.15) 1px, transparent 1px),
+                linear-gradient(rgba(76, 175, 80, 0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem;
+            flex-wrap: wrap;
+            margin-top: -2rem;
+        }
+
+        .auth-card {
+            background: rgba(28, 35, 43, 0.7);
+            border-radius: 15px;
+            padding: 1.5rem;
+            width: 380px;
+            text-align: center;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(76, 175, 80, 0.4);
+            background: rgba(28, 35, 43, 0.8);
+        }
+
+        .auth-card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 0.8rem;
+            filter: invert(1);
+            opacity: 0.8;
+        }
+
+        .auth-card h3 {
+            color: #4CAF50;
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+        }
+
+        .auth-card p {
+            color: #fff;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 0.7rem;
+            margin-top: 0.8rem;
+        }
+
+        .features-section {
+            padding: 4rem 2rem;
+            background: rgba(28, 35, 43, 0.7);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .features-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(76, 175, 80, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+            filter: invert(1);
+            opacity: 0.8;
+        }
+
+        .feature-card h3 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .auth-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .auth-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 0.8rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="scrolling-text">
+        <span>Welcome to 7Hills Solar Plant - Powering Tomorrow with Clean Energy Today</span>
+    </div>
+
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to 7Hills Solar Plant</h1>
+            <p>Join us in our mission to create a sustainable future through renewable energy</p>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div style="margin-bottom: 1rem; color: #4CAF50; font-weight: bold; font-size: 1.1rem;">Owner : RAMAYANAM SUJITH</div>
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Login">
+            <h3>Login</h3>
+            <p>Access dashboard and monitor solar plant</p>
+            <form id="loginForm">
+                <button type="submit" class="auth-btn">Login Now</button>
+            </form>
+            <p class="error-message" id="errorMessage" style="color: #ff4444; margin-top: 10px; display: none;"></p>
+        </div>
+    </div>
+
+    <div class="features-section">
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-solar-panel"></i>
+                <h3>Clean Energy</h3>
+                <p>Harness the power of the sun for sustainable energy generation</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Real-time Monitoring</h3>
+                <p>Track your solar plant's performance in real-time</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Advanced Analytics</h3>
+                <p>Get detailed insights into your energy production</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Handle login - Redirect directly to login.html
+        async function handleLogin(event) {
+            console.log('handleLogin function called.');
+            event.preventDefault();
+
+            // Redirect to login.html directly
+            window.location.href = 'login.html';
+        }
+
+        // Clear the loggingIn flag if it exists on page load (in case of manual navigation back to login)
+        if (sessionStorage.getItem('loggingIn')) {
+            sessionStorage.removeItem('loggingIn');
+        }
+
+        // Add event listener to the login form after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+        });
+        console.log('Login page script started.');
+    </script>
+</body>
+</html>

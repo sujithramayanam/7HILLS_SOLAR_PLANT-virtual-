@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Panels - 7Hills Solar Plant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://images.unsplash.com/photo-1592833159155-c62df1b65634?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateX(-3px);
+        }
+
+        .header-title {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            border-left: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .menu-title {
+            color: #4CAF50;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-item {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .menu-item i {
+            width: 20px;
+        }
+
+        .weather-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .weather-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weather-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .weather-value {
+            font-size: 0.9rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            margin: 2rem 0;
+        }
+
+        .summary-metric {
+            text-align: center;
+            padding: 0 2rem;
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .summary-metric:last-child {
+            border-right: none;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        .strings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-top: 2rem;
+            padding: 0.5rem;
+        }
+
+        .string-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .string-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .string-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .string-title {
+            color: #4CAF50;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .string-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+        .string-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.6rem;
+            border-radius: 8px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 0.4rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .metric-value {
+            font-size: 1rem;
+            color: #4CAF50;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="login.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </a>
+                </div>
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <h1 class="header-title" style="margin-bottom: 0.5rem;">Solar Panel Strings</h1>
+            <p style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 0.75rem;">Capacity of each Inverter: 1500kW</p>
+            <p>120 Parallel Strings Shared by All Inverters</p>
+        </div>
+
+        <div class="menu" id="menu">
+            <div class="menu-header">
+                <div class="menu-title">Menu</div>
+                <button class="close-btn" onclick="toggleMenu()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-items">
+                <a href="login.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="solar_panels.html" class="menu-item">
+                    <i class="fas fa-solar-panel"></i>
+                    Solar Panels
+                </a>
+                <a href="inverters.html" class="menu-item">
+                    <i class="fas fa-bolt"></i>
+                    Inverters
+                </a>
+                <a href="mfm.html" class="menu-item">
+                    <i class="fas fa-microchip"></i>
+                    MFMs
+                </a>
+                <a href="weather.html" class="menu-item">
+                    <i class="fas fa-cloud-sun"></i>
+                    Weather
+                </a>
+                <a href="alerts.html" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    Alerts
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="weather-bar">
+            <div class="weather-metric">
+                <span class="weather-label">Temperature:</span>
+                <span class="weather-value" id="temperature">--°C</span>
+            </div>
+            <div class="weather-metric">
+                <span class="weather-label">Irradiance:</span>
+                <span class="weather-value" id="irradiance">-- W/m²</span>
+            </div>
+            <div class="weather-metric">
+                <span class="weather-label">Cell Temperature:</span>
+                <span class="weather-value" id="cellTemperatureDisplay">--°C</span>
+            </div>
+            <div class="weather-metric">
+                <span class="weather-label">Cloud Cover:</span>
+                <span class="weather-value" id="clouds">--%</span>
+            </div>
+        </div>
+
+        <div class="summary-bar">
+            <div class="summary-metric">
+                <div class="summary-label">Total Power</div>
+                <div class="summary-value" id="totalPower">-- kW</div>
+            </div>
+            <div class="summary-metric">
+                <div class="summary-label">Total Voltage</div>
+                <div class="summary-value" id="totalVoltage">-- V</div>
+            </div>
+            <div class="summary-metric">
+                <div class="summary-label">Total Current</div>
+                <div class="summary-value" id="totalCurrent">-- A</div>
+            </div>
+        </div>
+
+        <div class="strings-grid" id="stringsGrid">
+            <!-- Strings will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        // Menu functionality
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // API configuration
+        const WEATHER_API_KEY = 'd09e3f6cf27f9110507e1a88f3bab5c8';
+        const LATITUDE = 13.6807;  // Hyderabad coordinates
+        const LONGITUDE = 79.3509;
+
+        // PV Module Specifications (Suntech STP335-24/Vfw)
+        const PV_RATED_POWER = 325;  // W (Power per module)
+        const Vmp = 37.7;  // V (Voltage at maximum power per module)
+        const Imp = 8.89;  // A (Current at maximum power per module)
+        const NMOT = 42;  // °C (Nominal Module Operating Temperature)
+        const TEMP_COEFF_PMAX = -0.0043;  // per °C (Power Temperature Coefficient)
+        const TEMP_COEFF_VOC = -0.0028;  // per °C (Voltage Temperature Coefficient)
+        const MODULES_PER_STRING = 40;  // 40 modules per string
+        const INVERTER_MAX_POWER = 1500 * 1000;  // 1250 kW in watts
+        const NUM_STRINGS_PER_INVERTER = 120;  // 120 strings per inverter
+        const NUM_INVERTERS = 3;  // 3 inverters
+
+        // Update weather data and string values
+        async function fetchWeatherData() {
+            try {
+                // Fetch weather data from OpenWeatherMap API
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${LATITUDE}&lon=${LONGITUDE}&appid=${WEATHER_API_KEY}&units=metric`);
+                const data = await response.json();
+
+                // Get weather data (matching Python variables)
+                const temperature = data.main.temp;
+                const cloudCover = data.clouds.all;
+                const windSpeed = data.wind.speed;
+
+                // Get current time in IST (UTC+5:30)
+                const now = new Date();
+                const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+                const istTimeEpoch = now.getTime() + istOffset;
+                const dateForIST = new Date(istTimeEpoch); // This Date's internal UTC value is the actual IST
+                const hour = dateForIST.getUTCHours(); // Extract hour component of this UTC value (which is IST hour)
+                const minute = dateForIST.getUTCMinutes(); // Extract minute component (which is IST minute)
+                const timeOfDay = hour + minute / 60;
+
+                // Calculate time of day factor (0 at 6 AM, 1 at noon, 0 at 6 PM)
+                let timeOfDayFactor;
+                if (timeOfDay < 6 || timeOfDay > 18) {
+                    // Night time (before 6 AM or after 6 PM)
+                    timeOfDayFactor = 0;
+                    console.log('Night time detected - setting irradiance to 0');
+                } else {
+                    // Day time (6 AM to 6 PM)
+                    timeOfDayFactor = Math.sin(Math.PI * (timeOfDay - 6) / 12);
+                    console.log('Day time detected - calculating irradiance');
+                }
+
+                // Calculate irradiance based on cloud cover and time of day
+                const clearSkyIrradiance = 1000; // Maximum possible irradiance
+                // const cloudFactor = 1 - (cloudCover / 100) * 0.75; // Cloud cover reduces irradiance - Bypassing to align with Python script's apparent direct use of clear-sky GHI
+                const irradiance = clearSkyIrradiance * timeOfDayFactor; // Using timeOfDayFactor directly with clearSkyIrradiance
+
+                // Log the time and irradiance calculations
+                const formattedISTHour = String(hour).padStart(2, '0');
+                const formattedISTMinute = String(minute).padStart(2, '0');
+                console.log(`Time (IST calculated for logic): ${formattedISTHour}:${formattedISTMinute}`);
+                console.log(`Time of Day: ${timeOfDay.toFixed(2)} hours`);
+                console.log(`Time of Day Factor: ${timeOfDayFactor.toFixed(2)}`);
+                console.log(`Cloud Cover: ${cloudCover}%`);
+                // console.log(`Cloud Factor: ${cloudFactor.toFixed(2)}`); // THIS LINE IS NOW COMMENTED OUT
+                console.log(`Calculated Irradiance: ${irradiance.toFixed(2)} W/m²`);
+
+                // Update weather display
+                document.getElementById('temperature').textContent = `${temperature.toFixed(1)}°C`; // This is Ambient Temperature
+                document.getElementById('clouds').textContent = `${cloudCover}%`;
+                document.getElementById('irradiance').textContent = `${Math.round(irradiance)} W/m²`;
+                
+                // Calculate cell temperature for the weather bar display
+                const cellTempForDisplay = calculateCellTemperature(temperature, irradiance, windSpeed);
+                document.getElementById('cellTemperatureDisplay').textContent = `${cellTempForDisplay.toFixed(1)}°C`;
+
+                // Update string values with new weather data, passing the calculated cellTemp
+                updateStringValues(irradiance, temperature, windSpeed, cellTempForDisplay);
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        }
+
+        // Calculate cell temperature based on ambient temp, irradiance, and wind speed
+        function calculateCellTemperature(ambientTemp, irradiance, windSpeed) {
+            // Using the same formula as Python code
+            const deltaT = (NMOT - 20) / 800 * irradiance;
+            const cellTemp = ambientTemp + deltaT;
+            
+            // Log the calculation (matching Python example)
+            console.log(`Cell Temperature Calculation:
+                Ambient Temperature: ${ambientTemp}°C
+                NOCT: ${NMOT}°C
+                Irradiance: ${irradiance}W/m²
+                Delta T: ${deltaT.toFixed(3)}°C
+                Cell Temperature: ${cellTemp.toFixed(3)}°C`);
+            
+            return cellTemp;
+        }
+
+        // Calculate power, voltage, current for the string
+        function calculateOutput(irradiance, cellTemperature) {
+            // If irradiance is zero (night time), return zero values
+            if (irradiance <= 0) {
+                console.log('Zero irradiance detected - returning zero values');
+                return {
+                    power: 0,
+                    voltage: 0,
+                    current: 0
+                };
+            }
+
+            // 1. Calculate temperature difference from STC (25°C)
+            const temperatureDifference = cellTemperature - 25;
+            console.log(`Temperature difference from STC: ${temperatureDifference.toFixed(3)}°C`);
+
+            // 2. Calculate voltage temperature loss factor
+            const voltageTempLoss = 1 + (TEMP_COEFF_VOC * temperatureDifference);
+            console.log(`Voltage temperature loss factor: ${voltageTempLoss.toFixed(4)}`);
+
+            // 3. Calculate irradiance ratio and factor
+            const irradianceRatio = irradiance / 1000;
+            console.log(`Irradiance ratio: ${irradianceRatio.toFixed(4)}`);
+            
+            let irradianceFactor;
+            // Using the same conditions as Python code
+            if (irradianceRatio >= 1.0) {
+                irradianceFactor = 1.0;
+            } else if (irradianceRatio >= 0.5) {
+                irradianceFactor = 0.5 + (irradianceRatio - 0.5) * 0.5;
+            } else {
+                irradianceFactor = 0.1 + (irradianceRatio - 0.1) * 0.4;
+            }
+            console.log(`Irradiance factor: ${irradianceFactor.toFixed(4)}`);
+            
+            // 4. Calculate effective voltage per module
+            const effectiveVoltagePerModule = Vmp * voltageTempLoss * irradianceFactor;
+            console.log(`Effective voltage per module: ${effectiveVoltagePerModule.toFixed(3)}V`);
+
+            // 5. Calculate total voltage for the string (series connection)
+            const totalVoltage = effectiveVoltagePerModule * MODULES_PER_STRING;
+            console.log(`Total voltage for string: ${totalVoltage.toFixed(2)}V`);
+
+            // 6. Calculate power temperature loss factor
+            const powerTempLoss = 1 + (TEMP_COEFF_PMAX * temperatureDifference);
+            console.log(`Power temperature loss factor: ${powerTempLoss.toFixed(4)}`);
+
+            // 7. Calculate effective power per module
+            const effectivePowerPerModule = PV_RATED_POWER * (irradiance / 1000) * powerTempLoss;
+            console.log(`Effective power per module: ${effectivePowerPerModule.toFixed(2)}W`);
+
+            // 8. Calculate total power for the string
+            const totalPower = effectivePowerPerModule * MODULES_PER_STRING;
+            console.log(`Total power for string: ${totalPower.toFixed(2)}W`);
+
+            // 9. Calculate current (same for all modules in series)
+            const effectiveCurrent = Imp * (irradiance / 1000);
+            console.log(`Effective current: ${effectiveCurrent.toFixed(2)}A`);
+
+            // Return raw float values to maintain precision for subsequent calculations
+            return {
+                power: totalPower,        // raw float (Watts)
+                voltage: totalVoltage,    // raw float (Volts)
+                current: effectiveCurrent // raw float (Amps)
+            };
+        }
+
+        // Function to update string values based on weather conditions
+        function updateStringValues(irradiance, temperature, windSpeed, cellTemp) {
+            // Cell temperature is now passed as a parameter
+            // const cellTemp = calculateCellTemperature(temperature, irradiance, windSpeed); // No longer needed here
+            
+            // Calculate output ONCE for all strings
+            const baseOutput = calculateOutput(irradiance, cellTemp); // baseOutput.power is in Watts
+            const singleStringVoltage = baseOutput.voltage;
+            const singleStringCurrent = baseOutput.current;
+            const singleStringPowerW = baseOutput.power; // This is in Watts
+
+            const stringCards = document.querySelectorAll('.string-card');
+
+            let overallTotalVoltage = 0;
+            let overallTotalCurrent = 0;
+            let overallTotalPowerW = 0; // Accumulate power in Watts
+            
+            // Log current conditions
+            console.log(`Current Conditions:
+                Irradiance: ${irradiance.toFixed(2)} W/m²
+                Air Temperature: ${temperature.toFixed(2)}°C
+                Cell Temperature: ${cellTemp.toFixed(2)}°C
+                Wind Speed: ${windSpeed.toFixed(2)} m/s`);
+
+            // Log the single string calculation once, if there's output
+            if (irradiance > 0 && singleStringPowerW > 0) {
+                console.log(`Base String Calculation (applied to all strings):
+                    Voltage: ${singleStringVoltage.toFixed(4)}V
+                    Current: ${singleStringCurrent.toFixed(5)}A
+                    Power: ${(singleStringPowerW/1000).toFixed(4)}kW`);
+            }
+
+            stringCards.forEach((card, index) => {
+                // Determine inverter index for naming purposes.
+                // Given NUM_STRINGS_PER_INVERTER = 120 and total strings = 120, inverterIndex will be 0.
+                const inverterIndex = Math.floor(index / NUM_STRINGS_PER_INVERTER);
+
+                // Use the pre-calculated single string values
+                let voltage = singleStringVoltage;
+                let current = singleStringCurrent;
+                let powerW = singleStringPowerW; // Power in Watts
+
+                // Format string ID like S01_001
+                const stringNumberInGroup = (index % NUM_STRINGS_PER_INVERTER) + 1;
+                const stringId = `S${(inverterIndex + 1).toString().padStart(2, '0')}_${stringNumberInGroup.toString().padStart(3, '0')}`;
+                
+                // Update card values
+                card.querySelector('.string-title').textContent = `String ${stringId}`; // ID is still unique
+                card.querySelectorAll('.metric-value')[0].textContent = `${voltage.toFixed(4)}V`;
+                card.querySelectorAll('.metric-value')[1].textContent = `${current.toFixed(5)}A`;
+                card.querySelectorAll('.metric-value')[2].textContent = `${(powerW/1000).toFixed(4)}kW`; // Display in kW
+
+                // Accumulate totals
+                overallTotalVoltage += voltage;
+                overallTotalCurrent += current;
+                overallTotalPowerW += powerW; // Accumulate power in Watts
+            });
+
+            // Update summary values using the accumulated totals
+            // These totals now represent the sum of identical, unscaled string values.
+            updateSummaryValues(overallTotalVoltage, overallTotalCurrent, overallTotalPowerW);
+        }
+
+        // Function to update summary values
+        // Accepts accumulated totals as arguments to avoid re-parsing from DOM
+        function updateSummaryValues(totalVoltage, totalCurrent, totalPowerInWatts) {
+            // Fallback if called without parameters (e.g. initial load before first data fetch if not careful)
+            if (totalVoltage === undefined || totalCurrent === undefined || totalPowerInWatts === undefined) {
+                const stringCards = document.querySelectorAll('.string-card');
+                totalVoltage = 0;
+                totalCurrent = 0;
+                totalPowerInWatts = 0; // Ensure this is initialized for the fallback
+
+                stringCards.forEach(card => {
+                    const metricValues = card.querySelectorAll('.metric-value');
+                    const v = parseFloat(metricValues[0].textContent);
+                    const c = parseFloat(metricValues[1].textContent);
+                    const pKW = parseFloat(metricValues[2].textContent); // Power from card is in kW
+
+                    if (!isNaN(v)) totalVoltage += v;
+                    if (!isNaN(c)) totalCurrent += c;
+                    if (!isNaN(pKW)) totalPowerInWatts += pKW * 1000; // Convert kW to Watts for sum
+                });
+            }
+
+            // Update summary values with exact same precision as Python
+            document.getElementById('totalVoltage').textContent = `${totalVoltage.toFixed(4)} V`;
+            document.getElementById('totalCurrent').textContent = `${totalCurrent.toFixed(5)} A`;
+            document.getElementById('totalPower').textContent = `${(totalPowerInWatts / 1000).toFixed(4)} kW`; // Convert total Watts to kW for display
+        }
+
+        // Initial fetch and set intervals
+        fetchWeatherData();
+        setInterval(fetchWeatherData, 5000); // Update every 5 seconds
+
+        // Function to create string cards
+        function createStringCards() {
+            const stringsGrid = document.getElementById('stringsGrid');
+            stringsGrid.innerHTML = ''; // Clear existing cards
+            
+            for (let i = 1; i <= 120; i++) {
+                const stringCard = document.createElement('div');
+                stringCard.className = 'string-card';
+                stringCard.innerHTML = `
+                    <div class="string-header">
+                        <div class="string-title">String ${i}</div>
+                        <div class="string-status"></div>
+                    </div>
+                    <div class="string-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Voltage</div>
+                            <div class="metric-value">0.0000V</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Current</div>
+                            <div class="metric-value">0.00000A</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Power</div>
+                            <div class="metric-value">0.0000kW</div>
+                        </div>
+                    </div>
+                `;
+                stringsGrid.appendChild(stringCard);
+            }
+        }
+
+        // Initial update of summary values
+        document.addEventListener('DOMContentLoaded', () => {
+            createStringCards();
+            // updateSummaryValues(); // This will now be called by fetchWeatherData -> updateStringValues
+        });
+    </script>
+</body>
+</html> 

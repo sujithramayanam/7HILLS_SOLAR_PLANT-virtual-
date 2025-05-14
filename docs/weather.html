@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather - 7Hills Solar Plant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://t3.ftcdn.net/jpg/12/89/32/28/360_F_1289322875_a9KBgMTNYGfLjcKeicIufK3LFQfa0HsJ.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateX(-3px);
+        }
+
+        .header-title {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            border-left: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .menu-title {
+            color: #4CAF50;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-item {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .menu-item i {
+            width: 20px;
+        }
+
+        .weather-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .weather-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weather-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .weather-value {
+            font-size: 0.9rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .summary-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            margin: 2rem 0;
+        }
+
+        .summary-metric {
+            text-align: center;
+            padding: 0 2rem;
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .summary-metric:last-child {
+            border-right: none;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        .strings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-top: 2rem;
+            padding: 0.5rem;
+        }
+
+        .string-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .string-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .string-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .string-title {
+            color: #4CAF50;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .string-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+        .string-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.6rem;
+            border-radius: 8px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 0.4rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .metric-value {
+            font-size: 1rem;
+            color: #4CAF50;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .weather-details-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .parameter-category {
+            margin-bottom: 2rem;
+        }
+
+        .parameter-category h2 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            font-size: 1.5rem;
+        }
+
+        .parameters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .parameter-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .parameter-card:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .parameter-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .parameter-value {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="login.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </a>
+                </div>
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <h1 class="header-title" style="margin-bottom: 0.5rem;">Weather Monitoring</h1>
+        </div>
+
+        <div class="menu" id="menu">
+            <div class="menu-header">
+                <div class="menu-title">Menu</div>
+                <button class="close-btn" onclick="toggleMenu()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-items">
+                <a href="login.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="solar_panels.html" class="menu-item">
+                    <i class="fas fa-solar-panel"></i>
+                    Solar Panels
+                </a>
+                <a href="inverters.html" class="menu-item">
+                    <i class="fas fa-bolt"></i>
+                    Inverters
+                </a>
+                <a href="mfm.html" class="menu-item">
+                    <i class="fas fa-microchip"></i>
+                    MFM
+                </a>
+                <a href="weather.html" class="menu-item">
+                    <i class="fas fa-cloud-sun"></i>
+                    Weather
+                </a>
+                <a href="alerts.html" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    Alerts
+                </a>
+                
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="weather-details-container">
+            <!-- Solar Radiation Parameters -->
+            <div class="parameter-category">
+                <h2>Solar Radiation Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Global Horizontal Irradiance (GHI)</div>
+                        <div class="parameter-value" id="ghi_value">-- W/m²</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Direct Normal Irradiance (DNI)</div>
+                        <div class="parameter-value" id="dni_value">-- W/m²</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Diffuse Horizontal Irradiance (DHI)</div>
+                        <div class="parameter-value" id="dhi_value">-- W/m²</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Plane of Array (POA) Irradiance</div>
+                        <div class="parameter-value" id="poa_value">-- W/m²</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Solar Zenith Angle</div>
+                        <div class="parameter-value" id="zenith_angle_value">-- °</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Solar Azimuth Angle</div>
+                        <div class="parameter-value" id="azimuth_angle_value">-- °</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meteorological Parameters -->
+            <div class="parameter-category">
+                <h2>Meteorological Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Ambient Temperature</div>
+                        <div class="parameter-value" id="ambient_temp_value">-- °C</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Relative Humidity</div>
+                        <div class="parameter-value" id="humidity_value">-- %</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Atmospheric Pressure</div>
+                        <div class="parameter-value" id="pressure_value">-- hPa</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Wind Speed</div>
+                        <div class="parameter-value" id="wind_speed_value">-- m/s</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Wind Direction</div>
+                        <div class="parameter-value" id="wind_direction_value">-- °</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Precipitation</div>
+                        <div class="parameter-value" id="precipitation_value">-- mm</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Dew Point</div>
+                        <div class="parameter-value" id="dew_point_value">-- °C</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Air Density</div>
+                        <div class="parameter-value" id="air_density_value">-- kg/m³</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Visibility</div>
+                        <div class="parameter-value" id="visibility_value">-- km</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Apparent Temperature (Feels Like)</div>
+                        <div class="parameter-value" id="apparent_temp_value">-- °C</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Wind Gust Speed</div>
+                        <div class="parameter-value" id="wind_gust_value">-- m/s</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Absolute Humidity</div>
+                        <div class="parameter-value" id="absolute_humidity_value">-- g/m³</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Rain Probability</div>
+                        <div class="parameter-value" id="rain_probability_value">-- %</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Snow Volume</div>
+                        <div class="parameter-value" id="snow_volume_value">-- mm</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Air Quality Parameters -->
+            <div class="parameter-category">
+                <h2>Air Quality Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Air Quality Index (AQI)</div>
+                        <div class="parameter-value" id="aqi_value">--</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">PM2.5</div>
+                        <div class="parameter-value" id="pm25_value">-- µg/m³</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">PM10</div>
+                        <div class="parameter-value" id="pm10_value">-- µg/m³</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">CO2 Levels</div>
+                        <div class="parameter-value" id="co2_value">-- ppm</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Ozone Levels</div>
+                        <div class="parameter-value" id="ozone_value">-- µg/m³</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">NO2 Levels</div>
+                        <div class="parameter-value" id="no2_value">-- µg/m³</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System-Specific Parameters (Optional) -->
+            <div class="parameter-category">
+                <h2>System-Specific Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Module Temperature</div>
+                        <div class="parameter-value" id="module_temp_value">-- °C</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Backsheet Temperature</div>
+                        <div class="parameter-value" id="backsheet_temp_value">-- °C</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Parameters for Advanced Monitoring -->
+            <div class="parameter-category">
+                <h2>Advanced Monitoring Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Cloud Cover</div>
+                        <div class="parameter-value" id="cloud_cover_value">-- %</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Solar Irradiance Spectrum</div>
+                        <div class="parameter-value" id="irradiance_spectrum_value">--</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">UV Index</div>
+                        <div class="parameter-value" id="uv_index_value">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu functionality
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // API configurations
+        // OWM_API_KEY is no longer needed for Open-Meteo
+        const LATITUDE = 13.6807;  // Hyderabad coordinates
+        const LONGITUDE = 79.3509;
+        const NMOT = 42;  // °C (Nominal Module Operating Temperature)
+
+        // Helper function to set text content or '--' if value is undefined/null
+        function setText(id, value, unit = '', precision = 1) {
+            const element = document.getElementById(id);
+            if (element) {
+                if (value !== undefined && value !== null && !isNaN(value)) {
+                    element.textContent = `${Number(value).toFixed(precision)} ${unit}`;
+                } else if (value !== undefined && value !== null && unit === '') { // For string values like '--' or pre-formatted text
+                     element.textContent = `${value}`;
+                }
+                else {
+                    element.textContent = `-- ${unit.trim()}`;
+                }
+            }
+        }
+
+        async function fetchWeatherData() {
+            console.log('fetchWeatherData started');
+            let ambientTemp = null;
+            let currentGhi = null;
+            let calculatedIrradianceForFallback = 0;
+
+            // Fallback Irradiance Calculation (simplified, used if API fails)
+            const now = new Date();
+            // Determine local time based on system's timezone settings for fallback
+            const localHour = now.getHours();
+            const localMinute = now.getMinutes();
+            const timeOfDay = localHour + localMinute / 60;
+
+            let timeOfDayFactor = 0;
+            if (timeOfDay >= 6 && timeOfDay <= 18) { // Simplified daylight hours
+                timeOfDayFactor = Math.sin(Math.PI * (timeOfDay - 6) / 12);
+            }
+            const clearSkyIrradiance = 1000; // W/m²
+            calculatedIrradianceForFallback = clearSkyIrradiance * timeOfDayFactor;
+            if (calculatedIrradianceForFallback < 0) calculatedIrradianceForFallback = 0;
+
+            try {
+                const forecastParams = [
+                    'temperature_2m', 'relativehumidity_2m', 'dewpoint_2m', 'apparent_temperature', 
+                    'surface_pressure', 'cloudcover', 'windspeed_10m', 'winddirection_10m', 
+                    'windgusts_10m', 'shortwave_radiation', 'direct_radiation', 'diffuse_radiation',
+                    'direct_normal_irradiance', 'precipitation', 'rain', 'snowfall', 
+                    'visibility', 'uv_index', 'weathercode'
+                ];
+                const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current_weather=true&hourly=${forecastParams.join(',')}&temperature_unit=celsius&windspeed_unit=ms&precipitation_unit=mm&timezone=auto`;
+                
+                const airQualityParams = ['pm10', 'pm2_5', 'nitrogen_dioxide', 'ozone', 'us_aqi', 'uv_index'];
+                const airQualityUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LATITUDE}&longitude=${LONGITUDE}&hourly=${airQualityParams.join(',')}&timezone=auto`;
+
+                const [forecastResponse, airQualityResponse] = await Promise.all([
+                    fetch(forecastUrl).catch(e => { console.error('Open-Meteo Forecast API fetch error:', e); return { json: () => Promise.resolve(null), ok: false, statusText: e.message }; }),
+                    fetch(airQualityUrl).catch(e => { console.error('Open-Meteo Air Quality API fetch error:', e); return { json: () => Promise.resolve(null), ok: false, statusText: e.message }; })
+                ]);
+
+                const forecastData = forecastResponse.ok ? await forecastResponse.json() : null;
+                const airQualityData = airQualityResponse.ok ? await airQualityResponse.json() : null;
+
+                console.log('Forecast Data:', forecastData);
+                console.log('Air Quality Data:', airQualityData);
+
+                const findCurrentHourIndex = (apiHourlyTimes) => {
+                    if (!apiHourlyTimes || apiHourlyTimes.length === 0) {
+                        // console.warn("API hourly times array is empty or undefined.");
+                        return -1;
+                    }
+                    const now = new Date(); // Current local date and time
+                    for (let i = apiHourlyTimes.length - 1; i >= 0; i--) {
+                        const apiTimeStr = apiHourlyTimes[i];
+                        // Assuming apiTimeStr from Open-Meteo (with timezone=auto) is like "YYYY-MM-DDTHH:MM"
+                        // and represents local time for the forecast location.
+                        // new Date(apiTimeStr) will parse it correctly according to the user's system's local timezone interpretation
+                        // if the string is standard. If it's purely local, it should be fine.
+                        const apiDateTime = new Date(apiTimeStr);
+                        if (apiDateTime <= now) {
+                            // This is the latest time slot in the API data that is not in the future.
+                            // console.log(`Found current hour index: ${i} for time ${apiTimeStr}, current time: ${now.toISOString()}`);
+                            return i;
+                        }
+                    }
+                    // If loop completes, all API times are in the future, or 'now' is before the first API time.
+                    // console.warn("All API hourly times are in the future, or current time is before the first API time slot. No current/past data point found.");
+                    return -1; // No suitable past or current slot found.
+                };
+                
+                let currentHourIndexForecast = -1;
+                if (forecastData && forecastData.hourly && forecastData.hourly.time) {
+                    currentHourIndexForecast = findCurrentHourIndex(forecastData.hourly.time);
+                }
+                
+                let currentHourIndexAirQuality = -1;
+                if (airQualityData && airQualityData.hourly && airQualityData.hourly.time) {
+                    currentHourIndexAirQuality = findCurrentHourIndex(airQualityData.hourly.time);
+                }
+
+                // Process Forecast Data (using current_weather first, then hourly)
+                if (forecastData && forecastData.current_weather) {
+                    const cw = forecastData.current_weather;
+                    ambientTemp = cw.temperature;
+                    setText('ambient_temp_value', cw.temperature, '°C');
+                    setText('wind_speed_value', cw.windspeed, 'm/s');
+                    setText('wind_direction_value', cw.winddirection, '°', 0);
+                    currentGhi = cw.shortwave_radiation !== undefined ? cw.shortwave_radiation : (forecastData.hourly && forecastData.hourly.shortwave_radiation && currentHourIndexForecast !== -1 ? forecastData.hourly.shortwave_radiation[currentHourIndexForecast] : calculatedIrradianceForFallback);
+                 } else { // Fallback if current_weather is missing
+                    console.error('Open-Meteo Forecast API Error or no current_weather data:', forecastData);
+                    ambientTemp = null; // Will use fallback or hourly if available
+                    currentGhi = calculatedIrradianceForFallback; // Use fallback GHI
+                    setText('ambient_temp_value', null, '°C');
+                    setText('wind_speed_value', null, 'm/s');
+                    setText('wind_direction_value', null, '°', 0);
+                }
+
+                if (forecastData && forecastData.hourly && currentHourIndexForecast !== -1) {
+                    const h = forecastData.hourly;
+                    // Override with hourly if current_weather was incomplete or for more precision
+                    if (ambientTemp === null && h.temperature_2m) ambientTemp = h.temperature_2m[currentHourIndexForecast];
+                    setText('ambient_temp_value', ambientTemp, '°C'); // Re-set with hourly if needed
+
+                    currentGhi = h.shortwave_radiation ? h.shortwave_radiation[currentHourIndexForecast] : currentGhi; // Prefer hourly GHI
+                    setText('ghi_value', currentGhi, 'W/m²');
+                    setText('dni_value', h.direct_normal_irradiance ? h.direct_normal_irradiance[currentHourIndexForecast] : null, 'W/m²');
+                    setText('dhi_value', h.diffuse_radiation ? h.diffuse_radiation[currentHourIndexForecast] : null, 'W/m²');
+                    setText('poa_value', currentGhi, 'W/m²'); 
+                    
+                    setText('humidity_value', h.relativehumidity_2m ? h.relativehumidity_2m[currentHourIndexForecast] : null, '%', 0);
+                    setText('pressure_value', h.surface_pressure ? h.surface_pressure[currentHourIndexForecast] : null, 'hPa', 0);
+                    setText('precipitation_value', h.precipitation ? h.precipitation[currentHourIndexForecast] : 0, 'mm');
+                    setText('dew_point_value', h.dewpoint_2m ? h.dewpoint_2m[currentHourIndexForecast] : null, '°C');
+                    setText('apparent_temp_value', h.apparent_temperature ? h.apparent_temperature[currentHourIndexForecast] : null, '°C');
+                    setText('wind_gust_value', h.windgusts_10m ? h.windgusts_10m[currentHourIndexForecast] : null, 'm/s');
+                    setText('snow_volume_value', h.snowfall ? h.snowfall[currentHourIndexForecast] : 0, 'mm'); // snowfall in mm by request
+                    setText('visibility_value', h.visibility ? (h.visibility[currentHourIndexForecast] / 1000) : null, 'km');
+                    setText('uv_index_value', h.uv_index ? h.uv_index[currentHourIndexForecast] : null, '', 0);
+                    setText('cloud_cover_value', h.cloudcover ? h.cloudcover[currentHourIndexForecast] : null, '%', 0);
+
+                } else {
+                    if (!forecastData || !forecastData.current_weather) { // Only log if current_weather also failed
+                       console.error('Open-Meteo Forecast API Error: No hourly data and no current_weather data.');
+                    }
+                     // Fallback for solar if hourly fails and current_weather didn't provide shortwave_radiation
+                    if (currentGhi === null || currentGhi === calculatedIrradianceForFallback ) { // if GHI wasn't set by current_weather or is already the fallback
+                        currentGhi = calculatedIrradianceForFallback;
+                        setText('ghi_value', currentGhi, 'W/m²');
+                        setText('dni_value', calculatedIrradianceForFallback, 'W/m²'); // DNI fallback
+                        setText('dhi_value', calculatedIrradianceForFallback, 'W/m²'); // DHI fallback
+                        setText('poa_value', currentGhi, 'W/m²'); // POA fallback
+                    }
+                    // Set other meteorological params to null/defaults if not already set by current_weather and hourly failed
+                    if(!forecastData || !forecastData.current_weather){ // if current_weather didn't set them
+                        setText('humidity_value', null, '%', 0);
+                        setText('pressure_value', null, 'hPa', 0);
+                        setText('precipitation_value', 0, 'mm');
+                        setText('dew_point_value', null, '°C');
+                        setText('apparent_temp_value', null, '°C');
+                        setText('wind_gust_value', null, 'm/s');
+                        setText('snow_volume_value', 0, 'mm');
+                        setText('visibility_value', null, 'km');
+                        setText('uv_index_value', null, '', 0);
+                        setText('cloud_cover_value', null, '%', 0);
+                    }
+                }
+                 // Parameters that remain placeholders
+                setText('rain_probability_value', '--', '%'); 
+                
+                // Process Air Quality Data
+                if (airQualityData && airQualityData.hourly && currentHourIndexAirQuality !== -1) {
+                    const aqh = airQualityData.hourly;
+                    setText('aqi_value', aqh.us_aqi ? aqh.us_aqi[currentHourIndexAirQuality] : '--', '', 0);
+                    setText('pm25_value', aqh.pm2_5 ? aqh.pm2_5[currentHourIndexAirQuality] : null, 'µg/m³', 0);
+                    setText('pm10_value', aqh.pm10 ? aqh.pm10[currentHourIndexAirQuality] : null, 'µg/m³', 0);
+                    setText('ozone_value', aqh.ozone ? aqh.ozone[currentHourIndexAirQuality] : null, 'µg/m³', 0); 
+                    setText('no2_value', aqh.nitrogen_dioxide ? aqh.nitrogen_dioxide[currentHourIndexAirQuality] : null, 'µg/m³', 0);
+                    // UV index can also come from air quality, set if forecast didn't provide it
+                     if (document.getElementById('uv_index_value').textContent.startsWith('--') && aqh.uv_index) {
+                        setText('uv_index_value', aqh.uv_index[currentHourIndexAirQuality], '', 0);
+                    }
+                } else {
+                    console.error('Open-Meteo Air Quality API Error or no hourly data:', airQualityData);
+                    setText('aqi_value', '--', '', 0);
+                    setText('pm25_value', null, 'µg/m³', 0);
+                    setText('pm10_value', null, 'µg/m³', 0);
+                    setText('ozone_value', null, 'µg/m³', 0);
+                    setText('no2_value', null, 'µg/m³', 0);
+                }
+
+                // System-Specific Parameters - Calculate Module Temperature
+                let irradianceForModuleTemp = currentGhi !== null ? currentGhi : calculatedIrradianceForFallback;
+                if (irradianceForModuleTemp !== null && ambientTemp !== null) {
+                    const numericIrradiance = parseFloat(irradianceForModuleTemp);
+                    const numericAmbientTemp = parseFloat(ambientTemp);
+                    if (!isNaN(numericIrradiance) && !isNaN(numericAmbientTemp)) {
+                        const deltaT = (NMOT - 20) / 800 * numericIrradiance;
+                        const moduleTempCalc = numericAmbientTemp + deltaT;
+                        setText('module_temp_value', moduleTempCalc, '°C');
+                    } else {
+                         setText('module_temp_value', null, '°C');
+                    }
+                } else {
+                    setText('module_temp_value', null, '°C');
+                }
+
+                // Parameters not typically covered or needing calculation
+                setText('zenith_angle_value', '--', '°');
+                setText('azimuth_angle_value', '--', '°');
+                setText('air_density_value', null, 'kg/m³'); 
+                setText('absolute_humidity_value', null, 'g/m³');
+                setText('soiling_value', '--', '');
+                setText('albedo_value', '--', '');
+                setText('backsheet_temp_value', null, '°C'); 
+                setText('irradiance_spectrum_value', '--', '');
+                setText('co2_value', null, 'ppm');
+
+            } catch (error) {
+                console.error('Critical error in fetchWeatherData function:', error);
+                const allParamIds = [
+                    'ghi_value', 'dni_value', 'dhi_value', 'poa_value', 'zenith_angle_value', 'azimuth_angle_value', 
+                    'ambient_temp_value', 'humidity_value', 'pressure_value', 'wind_speed_value', 'wind_direction_value', 
+                    'precipitation_value', 'dew_point_value', 'air_density_value', 'visibility_value', 
+                    'apparent_temp_value', 'wind_gust_value', 'absolute_humidity_value', 'rain_probability_value', 'snow_volume_value',
+                    'soiling_value', 'albedo_value', 'module_temp_value', 'backsheet_temp_value', 
+                    'cloud_cover_value', 'irradiance_spectrum_value', 'uv_index_value',
+                    'aqi_value', 'pm25_value', 'pm10_value', 'co2_value', 'ozone_value', 'no2_value'
+                ];
+                allParamIds.forEach(id => {
+                    let unit = '';
+                    let precision = 1;
+                    if (id.includes('temp') || id.includes('angle') || id.includes('direction') || id.includes('point')) unit = '°C';
+                    else if (id.includes('pressure')) unit = 'hPa';
+                    else if (id.includes('speed') || id.includes('gust')) unit = 'm/s';
+                    else if (id.includes('ghi') || id.includes('dni') || id.includes('dhi') || id.includes('poa')) unit = 'W/m²';
+                    else if (id.includes('humidity') || id.includes('cloud') || id.includes('probability')) { unit = '%'; precision = 0; }
+                    else if (id.includes('precipitation') || id.includes('snow')) unit = 'mm';
+                    else if (id.includes('visibility')) unit = 'km';
+                    else if (id.includes('density') || id.includes('absolute_humidity')) unit = 'g/m³';
+                    else if (id.includes('pm25') || id.includes('pm10') || id.includes('ozone') || id.includes('no2')) { unit = 'µg/m³'; precision = 0; }
+                    else if (id.includes('co2')) unit = 'ppm';
+                    else if (id.includes('aqi_value') || id.includes('uv_index_value')) { unit = ''; precision = 0; }
+                    
+                    if (id === 'pressure_value' || id === 'humidity_value' || id === 'wind_direction_value' || id === 'cloud_cover_value' || id.includes('aqi') || id.includes('uv_index_value') || id.includes('pm25') || id.includes('pm10') || id.includes('ozone') || id.includes('no2') ) precision = 0;
+
+                    setText(id, '--', unit, precision);
+                });
+            }
+        }
+
+        // Helper function to get the day of the year (1-365 or 366)
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        // Function to calculate Solar Zenith and Azimuth Angles
+        function calculateSolarAngles(latitude, longitude, dateAtLocation, utcOffsetSeconds) {
+            if (!dateAtLocation || utcOffsetSeconds === undefined || utcOffsetSeconds === null) {
+                console.warn("Missing dateAtLocation or utcOffsetSeconds for solar angle calculation.");
+                return { zenith: null, azimuth: null };
+            }
+
+            try {
+                const N = getDayOfYear(dateAtLocation);
+
+                // Convert angles to radians function
+                const toRadians = (degrees) => degrees * Math.PI / 180;
+                const toDegrees = (radians) => radians * 180 / Math.PI;
+
+                // a. Solar Declination (δ)
+                // B = (360/365)*(N-81)
+                const B_deg = (360 / 365) * (N - 81);
+                // δ = 23.44 * sin((360/365)*(N-81)) = 23.44 * sin(B)
+                const delta_deg = 23.44 * Math.sin(toRadians(B_deg));
+                const delta_rad = toRadians(delta_deg);
+
+                // d. Equation of Time (EoT)
+                // EoT = 9.87sin(2B)−7.53cos(B)−1.5sin(B) (in minutes)
+                const EoT_min = 9.87 * Math.sin(toRadians(2 * B_deg)) - 7.53 * Math.cos(toRadians(B_deg)) - 1.5 * Math.sin(toRadians(B_deg));
+
+                // c. Local Solar Time (LST)
+                // LST = UTC + TZ + ((4*(λ−Standard Meridian)+EoT)/60)
+                // TZ = Timezone Offset in hours
+                const TZ_hours = utcOffsetSeconds / 3600;
+                // Standard Meridian
+                const stdMeridian_deg = 15 * TZ_hours;
+                // UTC Time
+                const utcTime = new Date(dateAtLocation.getTime() - utcOffsetSeconds * 1000);
+                const utcHourDecimal = utcTime.getUTCHours() + utcTime.getUTCMinutes() / 60 + utcTime.getUTCSeconds() / 3600;
+
+                const lambda_deg = longitude;
+                const LST_hours = utcHourDecimal + TZ_hours + ((4 * (lambda_deg - stdMeridian_deg) + EoT_min) / 60);
+
+                // b. Hour Angle (H)
+                // H = 15 * (Local Solar Time − 12)
+                const H_deg = 15 * (LST_hours - 12);
+                const H_rad = toRadians(H_deg);
+
+                // e. Solar Zenith Angle (θ)
+                // cos(θ)=sin(ϕ)sin(δ)+cos(ϕ)cos(δ)cos(H)
+                const phi_rad = toRadians(latitude);
+                let cos_theta_zenith = Math.sin(phi_rad) * Math.sin(delta_rad) + Math.cos(phi_rad) * Math.cos(delta_rad) * Math.cos(H_rad);
+                cos_theta_zenith = Math.max(-1, Math.min(1, cos_theta_zenith)); // Clamp to avoid Math.acos domain error
+
+                const theta_zenith_rad = Math.acos(cos_theta_zenith);
+                const theta_zenith_deg = toDegrees(theta_zenith_rad);
+
+                // f. Solar Azimuth Angle (Az)
+                // sin(Az)=(-cos(δ)sin(H))/cos(θ)
+                let solar_azimuth_deg = null;
+                if (theta_zenith_deg <= 89.9) { // Calculate Azimuth only if sun is reasonably above horizon
+                    let val_for_asin = (-Math.cos(delta_rad) * Math.sin(H_rad)) / cos_theta_zenith;
+                    // Clamp val_for_asin to the valid range for Math.asin to prevent errors if cos_theta_zenith is near zero
+                    val_for_asin = Math.max(-1, Math.min(1, val_for_asin));
+                    
+                    const az_raw_rad = Math.asin(val_for_asin);
+                    const az_raw_deg = toDegrees(az_raw_rad);
+
+                    // Convert to 0-360 deg, N=0, E=90, S=180, W=270
+                    // Based on interpretation: az_raw_deg is offset from South, positive Eastwards
+                    // So, Az (from N) = (180 - az_raw_deg)
+                    solar_azimuth_deg = (180 - az_raw_deg + 360) % 360;
+                } else { // Sun is at or below horizon, Azimuth is less defined or can be set conventionally
+                    // For simplicity, null if sun is too low, or could set based on H_deg (e.g. ~90 for East if H<0, ~270 for West if H>0)
+                    solar_azimuth_deg = null; 
+                }
+                
+                return { zenith: theta_zenith_deg, azimuth: solar_azimuth_deg };
+
+            } catch (e) {
+                console.error("Error calculating solar angles:", e);
+                return { zenith: null, azimuth: null };
+            }
+        }
+
+        async function fetchWeatherData() {
+            let ambientTemp = null;
+            let currentGhi = null;
+            let calculatedIrradianceForFallback = 0;
+
+            // Fallback Irradiance Calculation (simplified, used if API fails)
+            const now = new Date();
+            // Determine local time based on system's timezone settings for fallback
+            const localHour = now.getHours();
+            const localMinute = now.getMinutes();
+            const timeOfDay = localHour + localMinute / 60;
+
+            let timeOfDayFactor = 0;
+            if (timeOfDay >= 6 && timeOfDay <= 18) { // Simplified daylight hours
+                timeOfDayFactor = Math.sin(Math.PI * (timeOfDay - 6) / 12);
+            }
+            const clearSkyIrradiance = 1000; // W/m²
+            calculatedIrradianceForFallback = clearSkyIrradiance * timeOfDayFactor;
+            if (calculatedIrradianceForFallback < 0) calculatedIrradianceForFallback = 0;
+
+            let timeStringForSolarCalc = null;
+            let utcOffsetForSolarCalc = null;
+
+            try {
+                const forecastParams = [
+                    'temperature_2m', 'relativehumidity_2m', 'dewpoint_2m', 'apparent_temperature', 
+                    'surface_pressure', 'cloudcover', 'windspeed_10m', 'winddirection_10m', 
+                    'windgusts_10m', 'shortwave_radiation', 'direct_radiation', 'diffuse_radiation',
+                    'direct_normal_irradiance', 'precipitation', 'rain', 'snowfall', 
+                    'visibility', 'uv_index', 'weathercode'
+                ];
+                const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current_weather=true&hourly=${forecastParams.join(',')}&temperature_unit=celsius&windspeed_unit=ms&precipitation_unit=mm&timezone=auto`;
+                
+                const airQualityParams = ['pm10', 'pm2_5', 'nitrogen_dioxide', 'ozone', 'us_aqi', 'uv_index'];
+                const airQualityUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LATITUDE}&longitude=${LONGITUDE}&hourly=${airQualityParams.join(',')}&timezone=auto`;
+
+                const [forecastResponse, airQualityResponse] = await Promise.all([
+                    fetch(forecastUrl).catch(e => { console.error('Open-Meteo Forecast API fetch error:', e); return { json: () => Promise.resolve(null), ok: false, statusText: e.message }; }),
+                    fetch(airQualityUrl).catch(e => { console.error('Open-Meteo Air Quality API fetch error:', e); return { json: () => Promise.resolve(null), ok: false, statusText: e.message }; })
+                ]);
+
+                const forecastData = forecastResponse.ok ? await forecastResponse.json() : null;
+                const airQualityData = airQualityResponse.ok ? await airQualityResponse.json() : null;
+
+                if (forecastData && forecastData.utc_offset_seconds !== undefined) {
+                    utcOffsetForSolarCalc = forecastData.utc_offset_seconds;
+                }
+
+                const findCurrentHourIndex = (apiHourlyTimes) => {
+                    if (!apiHourlyTimes || apiHourlyTimes.length === 0) {
+                        return -1;
+                    }
+                    const now_date = new Date(); 
+                    for (let i = apiHourlyTimes.length - 1; i >= 0; i--) {
+                        const apiTimeStr = apiHourlyTimes[i];
+                        const apiDateTime = new Date(apiTimeStr); // Assumes API time string is parsable into local date object
+                        if (apiDateTime <= now_date) {
+                            return i;
+                        }
+                    }
+                    return -1; 
+                };
+                
+                let currentHourIndexForecast = -1;
+                if (forecastData && forecastData.hourly && forecastData.hourly.time) {
+                    currentHourIndexForecast = findCurrentHourIndex(forecastData.hourly.time);
+                }
+                
+                let currentHourIndexAirQuality = -1;
+                if (airQualityData && airQualityData.hourly && airQualityData.hourly.time) {
+                    currentHourIndexAirQuality = findCurrentHourIndex(airQualityData.hourly.time);
+                }
+
+                // Determine the time string for solar calculations
+                if (forecastData && forecastData.current_weather && forecastData.current_weather.time) {
+                    timeStringForSolarCalc = forecastData.current_weather.time;
+                } else if (forecastData && forecastData.hourly && forecastData.hourly.time && currentHourIndexForecast !== -1) {
+                    timeStringForSolarCalc = forecastData.hourly.time[currentHourIndexForecast];
+                }
+
+
+                // Process Forecast Data (using current_weather first, then hourly)
+                if (forecastData && forecastData.current_weather) {
+                    const cw = forecastData.current_weather;
+                    ambientTemp = cw.temperature;
+                    setText('ambient_temp_value', cw.temperature, '°C');
+                    setText('wind_speed_value', cw.windspeed, 'm/s');
+                    setText('wind_direction_value', cw.winddirection, '°', 0);
+                    currentGhi = cw.shortwave_radiation !== undefined ? cw.shortwave_radiation : (forecastData.hourly && forecastData.hourly.shortwave_radiation && currentHourIndexForecast !== -1 ? forecastData.hourly.shortwave_radiation[currentHourIndexForecast] : calculatedIrradianceForFallback);
+                 } else { 
+                    console.error('Open-Meteo Forecast API Error or no current_weather data:', forecastData);
+                    ambientTemp = null; 
+                    currentGhi = calculatedIrradianceForFallback; 
+                    setText('ambient_temp_value', null, '°C');
+                    setText('wind_speed_value', null, 'm/s');
+                    setText('wind_direction_value', null, '°', 0);
+                }
+
+                if (forecastData && forecastData.hourly && currentHourIndexForecast !== -1) {
+                    const h = forecastData.hourly;
+                    if (ambientTemp === null && h.temperature_2m) ambientTemp = h.temperature_2m[currentHourIndexForecast];
+                    setText('ambient_temp_value', ambientTemp, '°C'); 
+
+                    currentGhi = h.shortwave_radiation ? h.shortwave_radiation[currentHourIndexForecast] : currentGhi; 
+                    setText('ghi_value', currentGhi, 'W/m²');
+                    setText('dni_value', h.direct_normal_irradiance ? h.direct_normal_irradiance[currentHourIndexForecast] : null, 'W/m²');
+                    setText('dhi_value', h.diffuse_radiation ? h.diffuse_radiation[currentHourIndexForecast] : null, 'W/m²');
+                    setText('poa_value', currentGhi, 'W/m²'); 
+                    
+                    setText('humidity_value', h.relativehumidity_2m ? h.relativehumidity_2m[currentHourIndexForecast] : null, '%', 0);
+                    setText('pressure_value', h.surface_pressure ? h.surface_pressure[currentHourIndexForecast] : null, 'hPa', 0);
+                    setText('precipitation_value', h.precipitation ? h.precipitation[currentHourIndexForecast] : 0, 'mm');
+                    setText('dew_point_value', h.dewpoint_2m ? h.dewpoint_2m[currentHourIndexForecast] : null, '°C');
+                    setText('apparent_temp_value', h.apparent_temperature ? h.apparent_temperature[currentHourIndexForecast] : null, '°C');
+                    setText('wind_gust_value', h.windgusts_10m ? h.windgusts_10m[currentHourIndexForecast] : null, 'm/s');
+                    setText('snow_volume_value', h.snowfall ? h.snowfall[currentHourIndexForecast] : 0, 'mm'); 
+                    setText('visibility_value', h.visibility ? (h.visibility[currentHourIndexForecast] / 1000) : null, 'km');
+                    setText('uv_index_value', h.uv_index ? h.uv_index[currentHourIndexForecast] : null, '', 0);
+                    setText('cloud_cover_value', h.cloudcover ? h.cloudcover[currentHourIndexForecast] : null, '%', 0);
+
+                } else {
+                    if (!forecastData || !forecastData.current_weather) { 
+                       console.error('Open-Meteo Forecast API Error: No hourly data and no current_weather data.');
+                    }
+                    if (currentGhi === null || currentGhi === calculatedIrradianceForFallback ) { 
+                        currentGhi = calculatedIrradianceForFallback;
+                        setText('ghi_value', currentGhi, 'W/m²');
+                        setText('dni_value', calculatedIrradianceForFallback, 'W/m²'); 
+                        setText('dhi_value', calculatedIrradianceForFallback, 'W/m²'); 
+                        setText('poa_value', currentGhi, 'W/m²'); 
+                    }
+                    if(!forecastData || !forecastData.current_weather){ 
+                        setText('humidity_value', null, '%', 0);
+                        setText('pressure_value', null, 'hPa', 0);
+                        setText('precipitation_value', 0, 'mm');
+                        setText('dew_point_value', null, '°C');
+                        setText('apparent_temp_value', null, '°C');
+                        setText('wind_gust_value', null, 'm/s');
+                        setText('snow_volume_value', 0, 'mm');
+                        setText('visibility_value', null, 'km');
+                        setText('uv_index_value', null, '', 0);
+                        setText('cloud_cover_value', null, '%', 0);
+                    }
+                }
+                setText('rain_probability_value', '--', '%'); 
+                
+                if (airQualityData && airQualityData.hourly && currentHourIndexAirQuality !== -1) {
+                    const aqh = airQualityData.hourly;
+                    setText('aqi_value', aqh.us_aqi ? aqh.us_aqi[currentHourIndexAirQuality] : '--', '', 0);
+                    setText('pm25_value', aqh.pm2_5 ? aqh.pm2_5[currentHourIndexAirQuality] : null, 'µg/m³', 0);
+                    setText('pm10_value', aqh.pm10 ? aqh.pm10[currentHourIndexAirQuality] : null, 'µg/m³', 0);
+                    setText('ozone_value', aqh.ozone ? aqh.ozone[currentHourIndexAirQuality] : null, 'µg/m³', 0); 
+                    setText('no2_value', aqh.nitrogen_dioxide ? aqh.nitrogen_dioxide[currentHourIndexAirQuality] : null, 'µg/m³', 0);
+                     if (document.getElementById('uv_index_value').textContent.startsWith('--') && aqh.uv_index) {
+                        setText('uv_index_value', aqh.uv_index[currentHourIndexAirQuality], '', 0);
+                    }
+                } else {
+                    console.error('Open-Meteo Air Quality API Error or no hourly data:', airQualityData);
+                    setText('aqi_value', '--', '', 0);
+                    setText('pm25_value', null, 'µg/m³', 0);
+                    setText('pm10_value', null, 'µg/m³', 0);
+                    setText('ozone_value', null, 'µg/m³', 0);
+                    setText('no2_value', null, 'µg/m³', 0);
+                }
+
+                let irradianceForModuleTemp = currentGhi !== null ? currentGhi : calculatedIrradianceForFallback;
+                if (irradianceForModuleTemp !== null && ambientTemp !== null) {
+                    const numericIrradiance = parseFloat(irradianceForModuleTemp);
+                    const numericAmbientTemp = parseFloat(ambientTemp);
+                    if (!isNaN(numericIrradiance) && !isNaN(numericAmbientTemp)) {
+                        const deltaT = (NMOT - 20) / 800 * numericIrradiance;
+                        const moduleTempCalc = numericAmbientTemp + deltaT;
+                        setText('module_temp_value', moduleTempCalc, '°C');
+                    } else {
+                         setText('module_temp_value', null, '°C');
+                    }
+                } else {
+                    setText('module_temp_value', null, '°C');
+                }
+
+                // Calculate and display Solar Angles
+                if (timeStringForSolarCalc && utcOffsetForSolarCalc !== null) {
+                    const dateAtLocation = new Date(timeStringForSolarCalc); // Assumes API time string is directly usable by new Date()
+                    const solarAngles = calculateSolarAngles(LATITUDE, LONGITUDE, dateAtLocation, utcOffsetForSolarCalc);
+                    setText('zenith_angle_value', solarAngles.zenith, '°', 1);
+                    setText('azimuth_angle_value', solarAngles.azimuth, '°', 1);
+                } else {
+                    setText('zenith_angle_value', '--', '°');
+                    setText('azimuth_angle_value', '--', '°');
+                    if (!timeStringForSolarCalc) console.warn("Time string for solar calculation is not available.");
+                    if (utcOffsetForSolarCalc === null) console.warn("UTC offset for solar calculation is not available.");
+                }
+                // Calculate Air Density
+                let airDensity = null;
+                if (ambientTemp !== null && forecastData && forecastData.hourly && forecastData.hourly.surface_pressure && currentHourIndexForecast !== -1 && forecastData.hourly.relativehumidity_2m && currentHourIndexForecast !== -1) {
+                    const pressure_hPa = forecastData.hourly.surface_pressure[currentHourIndexForecast];
+                    const rh_percentage = forecastData.hourly.relativehumidity_2m[currentHourIndexForecast];
+                    if (pressure_hPa !== null && rh_percentage !== null) {
+                        airDensity = calculateAirDensity(ambientTemp, pressure_hPa, rh_percentage);
+                    }
+                }
+                setText('air_density_value', airDensity, 'kg/m³', 3);
+
+                // Calculate Rain Probability
+                let rainProbability = null;
+                if (ambientTemp !== null && forecastData && forecastData.hourly && forecastData.hourly.dewpoint_2m && currentHourIndexForecast !== -1 && forecastData.hourly.relativehumidity_2m && currentHourIndexForecast !== -1) {
+                    const dewPoint_c = forecastData.hourly.dewpoint_2m[currentHourIndexForecast];
+                    const rh_percentage = forecastData.hourly.relativehumidity_2m[currentHourIndexForecast];
+                    if (dewPoint_c !== null && rh_percentage !== null) {
+                        rainProbability = calculateRainProbability(ambientTemp, dewPoint_c, rh_percentage);
+                    }
+                }
+                setText('rain_probability_value', rainProbability, '%', 2); // Using precision 2 for percentage
+
+                // Calculate Absolute Humidity
+                let absoluteHumidity = null;
+                if (ambientTemp !== null && forecastData && forecastData.hourly && forecastData.hourly.relativehumidity_2m && currentHourIndexForecast !== -1) {
+                    const rh_percentage = forecastData.hourly.relativehumidity_2m[currentHourIndexForecast];
+                    if (rh_percentage !== null) {
+                        absoluteHumidity = calculateAbsoluteHumidity(ambientTemp, rh_percentage);
+                    }
+                }
+                setText('absolute_humidity_value', absoluteHumidity, 'g/m³', 2);
+
+                setText('backsheet_temp_value', null, '°C'); 
+                setText('irradiance_spectrum_value', '--', '');
+                setText('co2_value', null, 'ppm');
+
+            } catch (error) {
+                console.error('Critical error in fetchWeatherData function:', error);
+                const allParamIds = [
+                    'ghi_value', 'dni_value', 'dhi_value', 'poa_value', 'zenith_angle_value', 'azimuth_angle_value', 
+                    'ambient_temp_value', 'humidity_value', 'pressure_value', 'wind_speed_value', 'wind_direction_value', 
+                    'precipitation_value', 'dew_point_value', 'air_density_value', 'visibility_value', 
+                    'apparent_temp_value', 'wind_gust_value', 'absolute_humidity_value', 'rain_probability_value', 'snow_volume_value',
+                    'module_temp_value', 'backsheet_temp_value', 
+                    'cloud_cover_value', 'irradiance_spectrum_value', 'uv_index_value',
+                    'aqi_value', 'pm25_value', 'pm10_value', 'co2_value', 'ozone_value', 'no2_value'
+                ];
+                allParamIds.forEach(id => {
+                    let unit = '';
+                    let precision = 1;
+                    if (id.includes('temp') || id.includes('angle') || id.includes('direction') || id.includes('point')) unit = '°C';
+                    else if (id.includes('pressure')) unit = 'hPa';
+                    else if (id.includes('speed') || id.includes('gust')) unit = 'm/s';
+                    else if (id.includes('ghi') || id.includes('dni') || id.includes('dhi') || id.includes('poa')) unit = 'W/m²';
+                    else if (id.includes('humidity') || id.includes('cloud') || id.includes('probability')) { unit = '%'; precision = 0; }
+                    else if (id.includes('precipitation') || id.includes('snow')) unit = 'mm';
+                    else if (id.includes('visibility')) unit = 'km';
+                    else if (id.includes('density') || id.includes('absolute_humidity')) unit = 'g/m³';
+                    else if (id.includes('pm25') || id.includes('pm10') || id.includes('ozone') || id.includes('no2')) { unit = 'µg/m³'; precision = 0; }
+                    else if (id.includes('co2')) unit = 'ppm';
+                    else if (id.includes('aqi_value') || id.includes('uv_index_value')) { unit = ''; precision = 0; }
+                    // else if (id === 'soiling_value') { unit = '%'; precision = 2; } // Removed as element is gone
+                    
+                    if (id === 'pressure_value' || id === 'humidity_value' || id === 'wind_direction_value' || id === 'cloud_cover_value' || id.includes('aqi') || id.includes('uv_index_value') || id.includes('pm25') || id.includes('pm10') || id.includes('ozone') || id.includes('no2') ) precision = 0;
+                    if (id === 'zenith_angle_value' || id === 'azimuth_angle_value') precision = 1;
+                    if (id === 'rain_probability_value') precision = 2; // Removed soiling_value check
+
+
+                    setText(id, '--', unit, precision);
+                });
+            }
+        }
+
+        // Function to calculate Air Density
+        function calculateAirDensity(temp_c, pressure_hPa, rh_percentage) {
+            if (temp_c === null || pressure_hPa === null || rh_percentage === null) {
+                return null;
+            }
+            try {
+                const temp_k = temp_c + 273.15;
+                const pressure_pa = pressure_hPa * 100; // Convert hPa to Pa
+                const rh = rh_percentage / 100; // Convert % to decimal
+
+                // Saturation vapor pressure (Pa) using Magnus-Tetens approximation
+                const p_sat = 610.94 * Math.exp((17.625 * temp_c) / (temp_c + 243.04));
+                
+                // Partial pressure of water vapor (Pa)
+                const p_v = rh * p_sat;
+                
+                // Partial pressure of dry air (Pa)
+                const p_d = pressure_pa - p_v;
+                
+                // Specific gas constants (J/(kg·K))
+                const R_d = 287.05;
+                const R_v = 461.5;
+                
+                // Air density (kg/m^3)
+                const air_density_calc = (p_d / (R_d * temp_k)) + (p_v / (R_v * temp_k));
+                
+                return parseFloat(air_density_calc.toFixed(3));
+            } catch (e) {
+                console.error("Error calculating air density:", e);
+                return null;
+            }
+        }
+
+        // Function to calculate Rain Probability
+        function calculateRainProbability(temp_c, dew_point_c, rh_percentage) {
+            if (temp_c === null || dew_point_c === null || rh_percentage === null) {
+                return null;
+            }
+            try {
+                let confidence;
+                const rh = rh_percentage; // Assuming rh_percentage is already 0-100
+
+                if (rh > 80 && temp_c - dew_point_c < 2) {
+                    confidence = 0.9;
+                } else if (rh > 60 && temp_c - dew_point_c < 4) {
+                    confidence = 0.6;
+                } else if (rh > 40 && temp_c - dew_point_c < 6) {
+                    confidence = 0.3;
+                } else {
+                    confidence = 0.1;
+                }
+
+                const area_coverage = rh / 100;
+                const pop = confidence * area_coverage;
+                
+                return parseFloat((pop * 100).toFixed(2));
+
+            } catch (e) {
+                console.error("Error calculating rain probability:", e);
+                return null;
+            }
+        }
+
+
+        // Function to calculate Absolute Humidity
+        function calculateAbsoluteHumidity(temp_c, rh_percentage) {
+            if (temp_c === null || rh_percentage === null) {
+                return null;
+            }
+            try {
+                const temp_k = temp_c + 273.15;
+                const rh_decimal = rh_percentage / 100;
+
+                // Saturation vapor pressure (Pa)
+                const p_sat = 610.94 * Math.exp((17.625 * temp_c) / (temp_c + 243.04));
+                
+                // Absolute humidity (g/m^3)
+                // Formula: AH = (C * P_sat * RH) / T_k
+                // where C is a constant (molecular weight of water / universal gas constant, approximately 2.167 g·K/J or 216.7 g·K/(Pa·m³))
+                // P_sat is in Pa, RH is decimal (0-1), T_k is in Kelvin.
+                // The formula seems to be derived from PV = nRT and density = m/V.
+                // The constant 216.7 is typically used when P_sat is in hPa (or mbar) and T_k in Kelvin, to get g/m³.
+                // If P_sat is in Pa, the constant would be 2.167. Let's use the constant from the user's formula.
+                const ah_calc = (216.7 * p_sat * rh_decimal) / temp_k; 
+                // Note: The user's Python formula implicitly assumes `rh` is a decimal (0.6) when calculating `p_sat * rh`.
+                // It's common to see this formula as (mass of water vapor * 10^5) / (gas constant for water vapor * temp_k) or variants.
+                // Or using P_v = rh * P_sat (vapor pressure) and AH = (P_v * M_w) / (R * T_k) where M_w is molar mass of water, R is universal gas constant
+                // (P_v / (R_v * T_k)) where R_v = R / M_w (specific gas constant for water vapor)
+                // If p_sat * rh is effectively partial pressure of water vapor in Pa, then:
+                // ah = ( (p_sat * rh_decimal) / (461.5 * temp_k) ) * 1000; to get g/m^3 (since 461.5 is R_v for water vapor in J/(kg·K))
+                // The provided formula (216.7 * p_sat * rh) / temp_k is a known approximation for g/m³
+                // assuming p_sat is in Pa, and rh is decimal. If p_sat was in hPa, then 2.167 * p_sat_hPa * rh / temp_k.
+                // The user's formula has `p_sat` in Pa. Let's directly use the formula given by user.
+
+                return parseFloat(ah_calc.toFixed(2));
+            } catch (e) {
+                console.error("Error calculating absolute humidity:", e);
+                return null;
+            }
+        }
+
+
+        // Fetch weather data when the page loads
+        document.addEventListener('DOMContentLoaded', fetchWeatherData);
+    </script>
+</body>
+</html>

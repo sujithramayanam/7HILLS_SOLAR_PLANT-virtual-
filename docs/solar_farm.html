@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7Hills Solar Plant - Farm Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            /* CSS Variables for dynamic landscape colors */
+            --sky-gradient: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 100%); /* Default: Day Sky */
+            --grass-gradient: linear-gradient(to top, #38761D, #6AA84F); /* Default: Day Grass */
+            --mountain-color1: #708090; /* Default: Day Mountain 1 */
+            --mountain-color2: #8293a0; /* Default: Day Mountain 2 */
+            --mountain-peak-size1: 22px;
+            --mountain-peak-size2: 35px;
+            --mountain-segment-width: 60px;
+            --mountain-segment-height: 40px;
+
+            background: var(--sky-gradient);
+            background-attachment: fixed;
+            color: #333; /* Default dark text color */
+            overflow-x: auto;
+            position: relative;
+            z-index: 0;
+        }
+
+        .navbar {
+            background: rgba(28, 35, 43, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+            position: sticky; /* Make navbar sticky */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            text-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .back-btn {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 40px 130px; /* Increased top/bottom padding, kept left padding */
+            margin-top: 20px; /* Space below sticky navbar */
+            width: 100%;
+            position: relative; /* For absolute positioning of child wires/DC disconnects */
+        }
+
+        .diagram-title {
+            font-size: 2rem;
+            color: #2c3e50; /* Dark blue-grey for title */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .component-row {
+            display: flex;
+            flex-wrap: wrap; /* Allow items to wrap to next line */
+            justify-content: center;
+            gap: 15px; /* Gap between items in a row */
+            margin-bottom: 30px; /* Increased from 20px */
+            width: 100%;
+            max-width: 1200px; /* Max width for rows to maintain some centering */
+            position: relative; /* Needed for absolute positioning of wires */
+            overflow-x: auto; /* Allow this row itself to scroll horizontally */
+            box-sizing: border-box; /* Ensure padding is included in width/max-width */
+            padding-left: 110px; /* Space for SMBs: 80px width + 25px js-spacing + 5px buffer */
+        }
+
+        .inverter {
+            width: 100px; /* Smaller width */
+            height: 50px; /* Smaller height */
+            background-color: rgba(243, 156, 18, 0.7); /* Orange with transparency */
+            border: 2px solid #e67e22;
+            color: #2d2d2d; /* Dark text for inverters */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1; /* Ensure inverters are above wires */
+        }
+
+        .string-block { /* Represents a string of 40 panels */
+            width: 100px;  /* Adjusted width for better image display */
+            height: 60px; /* Adjusted height for better image display */
+            background-image: url('https://www.energy.gov/sites/default/files/styles/full_article_width/public/2024-08/Crystalline-Silicon-Module.png?itok=MbcgoQm_');
+            background-size: cover; /* Fill the area, might crop image */
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            /* No text or flex properties needed here anymore as text is separate */
+        }
+
+        .string-item-container { /* New container for image + label */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px; /* Space between each item */
+            position: relative; /* To ensure items are above wires */
+            z-index: 1;         /* To ensure items are above wires */
+        }
+
+        .string-label { /* New class for the text label */
+            color: #333; /* Dark text for string labels */
+            font-size: 0.8em;
+            margin-top: 5px; /* Space between image and label */
+            text-align: center;
+        }
+
+        .wire { /* For connecting strings */
+            position: absolute;
+            background-color: black; /* Default, will be overridden by JS */
+            z-index: 0; /* Behind string items */
+            /* width/height will be set by JS */
+        }
+
+        .smb-box {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background-color: rgba(192, 192, 192, 0.7); /* Silver with transparency */
+            border: 1px solid #555;
+            color: #333; /* Ensure consistent dark text for SMBs */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7em;
+            font-weight: bold;
+            border-radius: 4px;
+            z-index: 1; /* Same level as string items */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .transformer {
+            width: 180px;
+            height: 90px;
+            background-color: rgba(41, 128, 185, 0.7); /* Blue with transparency */
+            border: 2px solid #3498db;
+            color: #ffffff; /* Transformer text remains white, its background is dark */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1em;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            margin-top: 60px; /* Further increased from 40px for more space */
+            z-index: 1; /* Ensure transformer is above wires */
+        }
+
+        .connection-line {
+            width: 80%;
+            max-width: 800px; /* Max width for connection lines */
+            height: 5px; 
+            background-color: #7f8c8d; /* Grey */
+            margin-top: 30px; 
+            margin-bottom: 40px; /* Reduced from 90px as DC Discs are removed */
+            border-radius: 3px;
+        }
+
+        /* Sky visuals */
+        .sky-visuals-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed; 
+            top: 0;
+            left: 0;
+            overflow: hidden; /* To contain celestial bodies and clouds */
+            /* Removed margin-bottom, border-bottom, and background-color as body handles background now */
+            z-index: -2; /* Ensure it's behind other content like navbar and diagram */
+        }
+
+        .celestial-body {
+            position: absolute;
+            border-radius: 50%;
+            transition: left 1s linear, top 1s ease-out, opacity 0.5s linear;
+            opacity: 0; /* Hidden by default, shown by JS */
+        }
+
+        #sun-element {
+            width: 80px;
+            height: 80px;
+            background-color: #FFD700; /* Gold */
+            box-shadow: 0 0 30px 10px #FFD700, 0 0 50px 20px rgba(255,223,0,0.5);
+        }
+
+        #moon-element {
+            width: 60px;
+            height: 60px;
+            background-color: #f5f3ce; /* Pale yellow/white */
+            box-shadow: 0 0 20px 5px #f5f3ce, 0 0 30px 10px rgba(245,243,206,0.5);
+        }
+
+        #clouds-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+        }
+
+        .cloud-element {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%; 
+            opacity: 0.7;
+            transition: opacity 1s;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+        }
+
+        .cloud-element::before,
+        .cloud-element::after {
+            content: '';
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        .cloud-element::before {
+            width: 60%; height: 60%; top: -30%; left: 20%;
+        }
+        .cloud-element::after {
+            width: 80%; height: 80%; top: -10%; right: -20%;
+        }
+
+        #debug-info {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.7);
+            color: #f0f0f0; /* Light grey for debug text for readability on dark bg */
+            padding: 10px;
+            font-size: 12px;
+            z-index: 2000; /* Ensure it's on top */
+            max-width: 100%;
+            overflow: auto;
+        }
+
+        /* Rain effect */
+        #rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden; /* Ensure raindrops don't make scrollbars if they animate slightly out */
+        }
+
+        .raindrop {
+            position: absolute;
+            bottom: 100%; /* Start above the sky container */
+            width: 1px;
+            height: 50px; /* Length of the raindrop */
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.4));
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(200vh); /* Fall a long distance */
+            }
+        }
+
+        /* .dc-disconnect-box rule removed as it's no longer needed */
+
+        .ac-busbar {
+            position: absolute;
+            background-color: #adb5bd; /* Light grey */
+            border: 1px solid #6c757d;
+            height: 15px; /* Busbar thickness */
+            z-index: 0; /* Below components but above general background, wires will be drawn to it */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body::before { /* Grass */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 15%; 
+            background: var(--grass-gradient);
+            z-index: -1;
+        }
+
+        body::after { /* Mountains */
+            content: '';
+            position: absolute;
+            bottom: 15%; 
+            left: 0;
+            width: 100%;
+            height: 25%; 
+            background-image: 
+                linear-gradient(315deg, var(--mountain-color1) var(--mountain-peak-size1), transparent var(--mountain-peak-size1)), 
+                linear-gradient(45deg, var(--mountain-color1) var(--mountain-peak-size1), transparent var(--mountain-peak-size1)),
+                linear-gradient(315deg, var(--mountain-color2) var(--mountain-peak-size2), transparent var(--mountain-peak-size2)), 
+                linear-gradient(45deg, var(--mountain-color2) var(--mountain-peak-size2), transparent var(--mountain-peak-size2));
+            background-size: var(--mountain-segment-width) var(--mountain-segment-height), var(--mountain-segment-width) var(--mountain-segment-height), var(--mountain-segment-width) var(--mountain-segment-height), var(--mountain-segment-width) var(--mountain-segment-height);
+            background-position: 0 0, 0 0, calc(var(--mountain-segment-width) / -2) 0, calc(var(--mountain-segment-width) / -2) 0; /* Offset for staggered peaks */
+            background-repeat: repeat-x;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <h1>7Hills Solar Plant</h1>
+        </div>
+        <a href="index.html" class="back-btn">Back to Dashboard</a>
+    </nav>
+
+    <div class="sky-visuals-container" id="sky-visuals-container">
+        <div id="sun-element" class="celestial-body"></div>
+        <div id="moon-element" class="celestial-body"></div>
+        <div id="clouds-container">
+            <!-- Clouds will be generated here by JavaScript -->
+        </div>
+        <div id="rain-container">
+            <!-- Raindrops will be generated here by JavaScript -->
+        </div>
+    </div>
+    <div id="debug-info">Debugging information will appear here...</div>
+
+    <div class="diagram-container">
+        <h1 class="diagram-title">Solar Farm Layout</h1>
+
+        <!-- Transformer Section -->
+        <div class="transformer">Transformer</div>
+
+        <div class="connection-line" id="inverter-to-transformer-line"></div>
+
+        <!-- Inverters Section -->
+        <div id="inverters-row" class="component-row">
+            <!-- Inverters will be generated by JavaScript -->
+        </div>
+
+        <div class="connection-line"></div>
+
+        <!-- Strings Section -->
+        <div id="strings-row" class="component-row">
+            <!-- String blocks will be generated by JavaScript -->
+        </div>
+        
+        <!-- Note: The connection line that was previously below the strings and above the transformer is now effectively below the inverters. -->
+        <!-- If a connection line is desired below the strings, it can be re-added here. -->
+    </div>
+
+    <script>
+        // Constants for weather simulation
+        const LATITUDE = 13.6807;  // Hyderabad coordinates (from weather.html)
+        const LONGITUDE = 79.3509; // (from weather.html)
+
+        // DOM Elements for sky
+        const skyContainer = document.getElementById('sky-visuals-container');
+        const sunElement = document.getElementById('sun-element');
+        const moonElement = document.getElementById('moon-element');
+        const cloudsContainer = document.getElementById('clouds-container');
+
+        // --- Helper functions (some adapted from weather.html) ---
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        function calculateSolarAngles(latitude, longitude, clientDateObject, targetUtcOffsetSeconds) {
+            let debugLST = null;
+            if (!clientDateObject || targetUtcOffsetSeconds === undefined || targetUtcOffsetSeconds === null) {
+                return { zenith: 90, azimuth: 180, lst: null };
+            }
+            try {
+                const N = getDayOfYear(clientDateObject); // Day of year from client's date
+                const toRadians = (degrees) => degrees * Math.PI / 180;
+                const toDegrees = (radians) => radians * 180 / Math.PI;
+
+                const B_deg = (360 / 365) * (N - 81);
+                const delta_deg = 23.44 * Math.sin(toRadians(B_deg));
+                const delta_rad = toRadians(delta_deg);
+                const EoT_min = 9.87 * Math.sin(toRadians(2 * B_deg)) - 7.53 * Math.cos(toRadians(B_deg)) - 1.5 * Math.sin(toRadians(B_deg));
+                
+                // Use the clientDateObject's UTC components directly
+                const currentUtcHourDecimal = clientDateObject.getUTCHours() + 
+                                          clientDateObject.getUTCMinutes() / 60 + 
+                                          clientDateObject.getUTCSeconds() / 3600;
+
+                const targetTimezoneHours = targetUtcOffsetSeconds / 3600; // e.g., 5.5 for IST
+                const stdMeridian_deg = 15 * targetTimezoneHours; // Standard meridian for the target timezone (IST)
+                const lambda_deg = longitude; // Longitude of Hyderabad
+
+                // LST (Local Solar Time) calculation
+                // LST = Current UTC time in hours + Target Timezone Offset in hours + Longitude/EoT correction for target location
+                let LST_hours = currentUtcHourDecimal + targetTimezoneHours + ((4 * (lambda_deg - stdMeridian_deg) + EoT_min) / 60);
+                // Ensure LST_hours is within 0-24 range if it wraps around due to additions
+                LST_hours = (LST_hours % 24 + 24) % 24;
+
+                debugLST = LST_hours; 
+                const H_deg = 15 * (LST_hours - 12); // Hour Angle
+                const H_rad = toRadians(H_deg);
+                const debugHourAngle = H_deg;
+                const phi_rad = toRadians(latitude);
+                let cos_theta_zenith = Math.sin(phi_rad) * Math.sin(delta_rad) + Math.cos(phi_rad) * Math.cos(delta_rad) * Math.cos(H_rad);
+                cos_theta_zenith = Math.max(-1, Math.min(1, cos_theta_zenith));
+                const theta_zenith_rad = Math.acos(cos_theta_zenith);
+                let theta_zenith_deg = toDegrees(theta_zenith_rad);
+
+                let solar_azimuth_deg = 180; 
+                 if (theta_zenith_deg < 89.5) { 
+                    const cos_H = Math.cos(H_rad);
+                    const sin_H = Math.sin(H_rad);
+                    const sin_phi = Math.sin(phi_rad);
+                    const cos_phi = Math.cos(phi_rad);
+                    const sin_delta = Math.sin(delta_rad);
+                    const cos_delta = Math.cos(delta_rad);
+                    let azimuth_rad = Math.atan2(sin_H, cos_H * sin_phi - Math.tan(delta_rad) * cos_phi);
+                    solar_azimuth_deg = toDegrees(azimuth_rad) + 180; 
+                    solar_azimuth_deg = (solar_azimuth_deg + 360) % 360; 
+                } else {
+                    theta_zenith_deg = Math.max(90, theta_zenith_deg); 
+                    solar_azimuth_deg = H_deg < 0 ? 90 : 270; 
+                }
+                return { zenith: theta_zenith_deg, azimuth: solar_azimuth_deg, lst: debugLST, utcHour: currentUtcHourDecimal, hourAngle: debugHourAngle };
+            } catch (e) {
+                console.error("Error calculating solar angles:", e);
+                return { zenith: 90, azimuth: 180, lst: null, utcHour: null, hourAngle: null }; 
+            }
+        }
+
+        function findCurrentHourIndex(apiHourlyTimes) {
+            if (!apiHourlyTimes || apiHourlyTimes.length === 0) {
+                return -1; // Or handle as an error/fallback
+            }
+            const nowDate = new Date();
+            for (let i = apiHourlyTimes.length - 1; i >= 0; i--) {
+                const apiTimeStr = apiHourlyTimes[i];
+                const apiDateTime = new Date(apiTimeStr); 
+                if (apiDateTime <= nowDate) {
+                    return i;
+                }
+            }
+            return 0; // Fallback or if all times are future
+        }
+
+        async function fetchRealWeatherData() {
+            const now = new Date();
+            const fallbackData = {
+                localTime: now,
+                utcOffsetSeconds: -(now.getTimezoneOffset() * 60),
+                cloudCover: Math.floor(Math.random() * 21), // Default to low clouds if API fails
+                weatherCode: 0, // Default to clear
+                isApiSuccess: false
+            };
+
+            try {
+                const forecastParams = [
+                    'cloudcover', 'weathercode' // We only need these for visuals now, plus time data
+                ];
+                const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current_weather=true&hourly=${forecastParams.join(',')}&timezone=auto`;
+                
+                const response = await fetch(forecastUrl);
+                if (!response.ok) {
+                    console.error('Open-Meteo API fetch error:', response.statusText);
+                    return fallbackData;
+                }
+                const data = await response.json();
+
+                if (!data || !data.current_weather || !data.hourly || !data.hourly.time) {
+                    console.error('Open-Meteo API data is incomplete.');
+                    return fallbackData;
+                }
+
+                const currentHourIndex = findCurrentHourIndex(data.hourly.time);
+                let cloudCover = fallbackData.cloudCover;
+                let weatherCode = fallbackData.weatherCode;
+                let apiTime = fallbackData.localTime;
+                let utcOffset = fallbackData.utcOffsetSeconds;
+
+                if (data.current_weather.cloudcover !== undefined) {
+                    cloudCover = data.current_weather.cloudcover;
+                } else if (data.hourly.cloudcover && currentHourIndex !== -1 && data.hourly.cloudcover[currentHourIndex] !== undefined) {
+                    cloudCover = data.hourly.cloudcover[currentHourIndex];
+                }
+
+                if (data.current_weather.weathercode !== undefined) {
+                    weatherCode = data.current_weather.weathercode;
+                } else if (data.hourly.weathercode && currentHourIndex !== -1 && data.hourly.weathercode[currentHourIndex] !== undefined) {
+                    weatherCode = data.hourly.weathercode[currentHourIndex];
+                }
+                
+                if (data.current_weather.time) {
+                    apiTime = new Date(data.current_weather.time);
+                }
+
+                if (data.utc_offset_seconds !== undefined) {
+                    utcOffset = data.utc_offset_seconds;
+                }
+
+                return {
+                    localTime: apiTime,
+                    utcOffsetSeconds: utcOffset,
+                    cloudCover: cloudCover,
+                    weatherCode: weatherCode,
+                    isApiSuccess: true
+                };
+
+            } catch (error) {
+                console.error('Critical error in fetchRealWeatherData function:', error);
+                return fallbackData;
+            }
+        }
+
+        function updateSkyVisuals(weatherContext) {
+            // Time for solar angles will be based on client's system time, interpreted as IST.
+            const timeForSolarAngles = new Date(); 
+            const istUtcOffsetSeconds = 19800; // UTC+5:30 for Indian Standard Time
+
+            // Destructure weatherContext for cloud and rain data from API
+            const { cloudCover, weatherCode, isApiSuccess, localTime: apiLocalTime } = weatherContext;
+            
+            if (!skyContainer || !sunElement || !moonElement || !cloudsContainer) return;
+
+            const skyWidth = skyContainer.offsetWidth;
+            const skyHeight = skyContainer.offsetHeight;
+            
+            // Calculate solar angles using client's system time with IST offset.
+            const solarAngles = calculateSolarAngles(LATITUDE, LONGITUDE, timeForSolarAngles, istUtcOffsetSeconds);
+            const zenith = solarAngles.zenith;
+            const azimuth = solarAngles.azimuth; // Azimuth: 0 North, 90 East, 180 South, 270 West
+
+            const isDayTime = zenith < 89.5; // Threshold for sun being up
+
+            // --- Update Dynamic Landscape CSS Variables ---
+            const bodyStyle = document.body.style;
+            if (isDayTime) {
+                bodyStyle.setProperty('--sky-gradient', 'linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 100%)'); // Day Sky
+                bodyStyle.setProperty('--grass-gradient', 'linear-gradient(to top, #38761D, #6AA84F)');       // Day Grass
+                bodyStyle.setProperty('--mountain-color1', '#708090');                                  // Day Mountain 1
+                bodyStyle.setProperty('--mountain-color2', '#8293a0');                                  // Day Mountain 2
+                // Potentially adjust text colors of specific elements back to darker if they were changed for night
+            } else { // Night time
+                bodyStyle.setProperty('--sky-gradient', 'linear-gradient(to bottom, #000020 0%, #101030 70%, #202040 100%)'); // Night Sky
+                bodyStyle.setProperty('--grass-gradient', 'linear-gradient(to top, #1A3A0B, #2A5211)');            // Night Grass (darker, desaturated)
+                bodyStyle.setProperty('--mountain-color1', '#3A3F44');                                       // Night Mountain 1 (darker)
+                bodyStyle.setProperty('--mountain-color2', '#4A545B');                                       // Night Mountain 2 (darker)
+                // Potentially adjust text colors of specific elements to lighter if they are hard to read on dark bg
+            }
+
+            // Debugging Output
+            const debugDiv = document.getElementById('debug-info');
+            const currentHourIST = timeForSolarAngles.getHours() + (timeForSolarAngles.getMinutes() / 60); // Get current hour in IST (as client time is treated as IST)
+
+            if (debugDiv) {
+                const clientTimeFormatted = timeForSolarAngles.toLocaleTimeString('en-IN', { timeZone:'Asia/Kolkata', hour: 'numeric', minute:'2-digit', second:'2-digit', hour12: true });
+                const clientTimeRaw = timeForSolarAngles.toString();
+                const apiTimeFormatted = apiLocalTime ? apiLocalTime.toLocaleTimeString('en-US', { hour: 'numeric', minute:'2-digit', second:'2-digit', hour12: true }) : 'N/A (API fail or no time)';
+                
+                debugDiv.innerHTML = 
+                    `<b>IST:</b> ${clientTimeFormatted}<br>
+                     <b>Calculated Zenith:</b> ${zenith ? zenith.toFixed(3) : 'N/A'}°<br>
+                     <b>Calculated Azimuth:</b> ${azimuth ? azimuth.toFixed(3) : 'N/A'}°<br>
+                     <b>Is Daytime:</b> ${isDayTime}<br>
+                     <b>Cloud Cover:</b> ${cloudCover}%`;
+            }
+
+            if (isDayTime) {
+                // If cloud cover is extreme, sun might be barely visible or not at all
+                sunElement.style.opacity = (cloudCover > 95) ? '0.1' : '1';
+                moonElement.style.opacity = '0';
+
+                // Sun X position: Directly based on current hour (6 AM to 6 PM IST)
+                const visualDayStartHour = 6;
+                const visualDayEndHour = 18;
+                let sunXPercent = 0;
+                if (currentHourIST >= visualDayStartHour && currentHourIST <= visualDayEndHour) {
+                    sunXPercent = ((currentHourIST - visualDayStartHour) / (visualDayEndHour - visualDayStartHour)) * 100;
+                } else if (currentHourIST < visualDayStartHour) {
+                    sunXPercent = 0; // Clamped to left before 6 AM
+                } else { // After 6 PM
+                    sunXPercent = 100; // Clamped to right after 6 PM
+                }
+                sunXPercent = Math.max(0, Math.min(100, sunXPercent)); // Ensure it's within 0-100
+                
+                // Sun Y position (still using zenith for arc effect)
+                const normalizedZenith = zenith / 90; 
+                const sunYPercent = 40 - (Math.cos(normalizedZenith * Math.PI) * 35); 
+                
+                sunElement.style.left = `calc(${sunXPercent}% - ${sunElement.offsetWidth / 2}px)`;
+                sunElement.style.top = `calc(${sunYPercent}% - ${sunElement.offsetHeight / 2}px)`;
+                
+                // Sky background
+                if (cloudCover > 95) {
+                    skyContainer.style.background = 'linear-gradient(to bottom, #4a4a4a, #2a2a2a)'; // Dark, stormy grey for day
+                } else {
+                    const hours = timeForSolarAngles.getHours(); // Use client's hours for dawn/dusk nuances
+                    if (zenith < 80) { 
+                        skyContainer.style.background = 'linear-gradient(to bottom, #5cadff, #a0d2ff)';
+                    } else if (zenith < 89.5) { 
+                        if (azimuth < 180) { 
+                            skyContainer.style.background = 'linear-gradient(to bottom, #ffcc66, #ffb347, #ffdd99)';
+                        } else { 
+                            skyContainer.style.background = 'linear-gradient(to bottom, #ff6f61, #ff8c69, #ffb347)';
+                        }
+                    } else { 
+                        skyContainer.style.background = 'linear-gradient(to bottom, #5cadff, #a0d2ff)'; 
+                    }
+                }
+            } else { // Night time (zenith >= 89.5)
+                sunElement.style.opacity = '0';
+                // If cloud cover is extreme, moon might be barely visible or not at all
+                moonElement.style.opacity = (cloudCover > 95) ? '0.1' : '1';
+
+                const clientHourDecimal = timeForSolarAngles.getHours() + timeForSolarAngles.getMinutes() / 60;
+                let moonXPercent = 0;
+
+                // Define visual nighttime period (e.g., 6 PM to 6 AM)
+                const visualNightStartHour = 18; // 6 PM
+                const visualMidNightHour = 24; // Midnight (or 0 of next day)
+                const visualNightEndHour = 6;   // 6 AM (next day)
+
+                if (clientHourDecimal >= visualNightStartHour) { // Between 6 PM and midnight
+                    moonXPercent = ((clientHourDecimal - visualNightStartHour) / (visualMidNightHour - visualNightStartHour)) * 50;
+                } else if (clientHourDecimal < visualNightEndHour) { // Between midnight and 6 AM
+                    moonXPercent = 50 + (clientHourDecimal / visualNightEndHour) * 50;
+                } else { // Should not happen if isDayTime is false, but for safety (e.g. if sun just set)
+                     // If it's just after sunset, place moon on left; if just before sunrise, on right.
+                    moonXPercent = (currentHourIST < 12) ? 0 : 100; 
+                }
+                moonXPercent = Math.max(0, Math.min(100, moonXPercent)); // Clamp to 0-100
+
+                // Moon Y position (simple arc)
+                // To make the arc span the 0-100% X range, we need nightProgress from 0 to 1
+                let nightProgressRatio = 0;
+                if (clientHourDecimal >= visualNightStartHour) { 
+                    nightProgressRatio = (clientHourDecimal - visualNightStartHour) / ((visualMidNightHour - visualNightStartHour) + visualNightEndHour); 
+                } else if (clientHourDecimal < visualNightEndHour) { 
+                    nightProgressRatio = ((visualMidNightHour - visualNightStartHour) + clientHourDecimal) / ((visualMidNightHour - visualNightStartHour) + visualNightEndHour);
+                }
+                const moonYPercent = 50 - (Math.sin(nightProgressRatio * Math.PI) * 35); 
+
+                moonElement.style.left = `calc(${moonXPercent}% - ${moonElement.offsetWidth / 2}px)`;
+                moonElement.style.top = `calc(${moonYPercent}% - ${moonElement.offsetHeight / 2}px)`;
+                
+                // Sky background for night
+                if (cloudCover > 95) {
+                    skyContainer.style.background = 'linear-gradient(to bottom, #202020, #101010)'; // Very dark stormy grey for night
+                } else {
+                    skyContainer.style.background = 'linear-gradient(to bottom, #000020, #101030)'; 
+                }
+            }
+
+            // Cloud display uses API cloudCover
+            cloudsContainer.innerHTML = ''; 
+            const numClouds = Math.floor((cloudCover / 100) * 8); 
+
+            for (let i = 0; i < numClouds; i++) {
+                const cloud = document.createElement('div');
+                cloud.classList.add('cloud-element');
+                const size = Math.random() * 60 + 40; 
+                cloud.style.width = `${size}px`;
+                cloud.style.height = `${size * 0.6}px`;
+                cloud.style.left = `${Math.random() * (skyWidth - size)}px`;
+                cloud.style.top = `${Math.random() * (skyHeight * 0.5 - (size*0.6))}px`;
+                cloud.style.opacity = `${Math.random() * 0.2 + 0.6}`; // Existing cloud opacity
+                // Make clouds darker if sky is very overcast and dark
+                if (cloudCover > 95) {
+                    cloud.style.background = '#888'; // Darker clouds
+                    cloud.style.opacity = `${Math.random() * 0.3 + 0.5}`; // Slightly adjust opacity if needed
+                }
+                cloudsContainer.appendChild(cloud);
+            }
+
+            // Rain display
+            const rainContainer = document.getElementById('rain-container');
+            if (rainContainer) {
+                rainContainer.innerHTML = ''; 
+                const rainWeatherCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82]; // WMO codes for rain
+                const isRainingFromWeatherCode = rainWeatherCodes.includes(weatherCode);
+                const isHeavyOvercast = cloudCover > 95;
+
+                if (isRainingFromWeatherCode || isHeavyOvercast) {
+                    let numRaindrops;
+                    if (isHeavyOvercast) { // Heavy rain for very cloudy conditions
+                        numRaindrops = 100 + Math.floor(Math.random() * 100); // More raindrops
+                    } else { // Standard rain from weather code
+                        numRaindrops = 50 + Math.floor(Math.random() * 50);
+                    }
+
+                    for (let i = 0; i < numRaindrops; i++) {
+                        const raindrop = document.createElement('div');
+                        raindrop.classList.add('raindrop');
+                        raindrop.style.left = `${Math.random() * 100}%`; 
+                        // Make rain appear a bit more intense if heavy overcast
+                        raindrop.style.animationDuration = isHeavyOvercast ? `${Math.random() * 0.4 + 0.2}s` : `${Math.random() * 0.5 + 0.5}s`;
+                        raindrop.style.animationDelay = isHeavyOvercast ? `${Math.random() * 0.5}s` : `${Math.random() * 1}s`; 
+                        if (isHeavyOvercast) {
+                            raindrop.style.height = `${Math.random() * 20 + 50}px`; // Slightly longer/varied raindrops
+                            // Optionally change color or gradient for heavy rain effect
+                            // raindrop.style.background = 'linear-gradient(to bottom, rgba(200,200,220,0), rgba(200,200,220,0.5))';
+                        }
+                        rainContainer.appendChild(raindrop);
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const NUM_INVERTERS = 5; // Changed to 5 inverters
+            const NUM_STRINGS = 120;
+            const PANELS_PER_STRING = 40; // For display text
+
+            const invertersRow = document.getElementById('inverters-row');
+            const stringsRow = document.getElementById('strings-row');
+
+            // Generate Inverters
+            if (invertersRow) {
+                for (let i = 1; i <= NUM_INVERTERS; i++) {
+                    const inverterDiv = document.createElement('div');
+                    inverterDiv.classList.add('inverter');
+                    inverterDiv.textContent = 'Inverter ' + i;
+                    invertersRow.appendChild(inverterDiv);
+                }
+            }
+
+            // Generate String Blocks
+            if (stringsRow) {
+                for (let i = 1; i <= NUM_STRINGS; i++) {
+                    // Create a container for the image and its label
+                    const itemContainer = document.createElement('div');
+                    itemContainer.classList.add('string-item-container');
+
+                    // Create the div for the image
+                    const stringImageDiv = document.createElement('div');
+                    stringImageDiv.classList.add('string-block');
+                    // No text content for the image div itself
+
+                    // Create the div for the label
+                    const labelDiv = document.createElement('div');
+                    labelDiv.classList.add('string-label');
+                    labelDiv.textContent = 'String ' + i;
+
+                    // Append image and label to the item container
+                    itemContainer.appendChild(stringImageDiv);
+                    itemContainer.appendChild(labelDiv);
+
+                    // Append the item container to the main strings row
+                    stringsRow.appendChild(itemContainer);
+                }
+            }
+
+            // Initial weather and sky update
+            if (typeof fetchRealWeatherData === 'function' && typeof updateSkyVisuals === 'function') {
+                fetchRealWeatherData().then(weatherContext => {
+                    updateSkyVisuals(weatherContext);
+                });
+
+                // Periodically update weather and sky
+                setInterval(() => {
+                    fetchRealWeatherData().then(weatherContext => {
+                        updateSkyVisuals(weatherContext);
+                    });
+                }, 300000); // Update every 5 minutes (300,000 ms)
+            } else {
+                console.error("Sky update functions not defined. Sky visuals will not be updated.");
+            }
+
+            createAndConnectSMBs(NUM_STRINGS); // Pass NUM_STRINGS
+            // connectStringsInColumns(); // Call function to draw vertical wires (REMOVED)
+            connectStringsInRows();    // Call function to draw horizontal wires
+            connectSmbsToInverters(); // Renamed function call for direct SMB to Inverter wiring
+            connectInvertersToTransformerViaAcBusbar(); // New AC wiring function
+        });
+
+        function createAndConnectSMBs(totalStringsGenerated) { // Accept totalStringsGenerated as parameter
+            const stringsRow = document.getElementById('strings-row');
+            if (!stringsRow) return;
+
+            // Clear previous SMBs and their wires
+            stringsRow.querySelectorAll('.generated-smb, .generated-smb-h-wire').forEach(el => el.remove());
+
+            const stringItemContainers = Array.from(stringsRow.querySelectorAll('.string-item-container'));
+            if (stringItemContainers.length === 0) return;
+
+            const STRINGS_PER_SMB = 8; // Updated as per new configuration
+            const numSmbs = Math.ceil(totalStringsGenerated / STRINGS_PER_SMB);
+
+            const stringsRowRect = stringsRow.getBoundingClientRect();
+            const smbHeight = 40; // From CSS
+            const smbWidth = 80;  // From CSS
+            const spacingToLeftOfString = 25; // Space between SMB right and string left
+
+            for (let smbIndex = 0; smbIndex < numSmbs; smbIndex++) {
+                const firstStringGlobalIndex = smbIndex * STRINGS_PER_SMB;
+
+                if (firstStringGlobalIndex >= stringItemContainers.length) {
+                    console.warn(`Not enough string items generated (${stringItemContainers.length}) to place SMB ${smbIndex + 1} which needs string index ${firstStringGlobalIndex}. Total strings: ${totalStringsGenerated}`);
+                    continue;
+                }
+
+                const targetStringContainer = stringItemContainers[firstStringGlobalIndex];
+                const targetStringBlock = targetStringContainer.querySelector('.string-block');
+                if (!targetStringBlock) {
+                    console.warn(`String block not found for string index ${firstStringGlobalIndex} for SMB ${smbIndex + 1}`);
+                    continue;
+                }
+
+                const targetStringBlockRect = targetStringBlock.getBoundingClientRect();
+
+                // Create SMB Div
+                const smbDiv = document.createElement('div');
+                smbDiv.className = 'smb-box generated-smb';
+                
+                const startStringNum = firstStringGlobalIndex + 1;
+                const endStringNum = Math.min((smbIndex + 1) * STRINGS_PER_SMB, totalStringsGenerated);
+                smbDiv.textContent = `SMB ${smbIndex + 1} (S${startStringNum}-S${endStringNum})`;
+                
+                // Position SMB to the left of the target string block
+                const smbCalculatedLeft = (targetStringBlockRect.left - stringsRowRect.left) - smbWidth - spacingToLeftOfString;
+                const smbCalculatedTop = (targetStringBlockRect.top - stringsRowRect.top + targetStringBlockRect.height / 2) - smbHeight / 2;
+                
+                smbDiv.style.left = smbCalculatedLeft + 'px';
+                smbDiv.style.top = smbCalculatedTop + 'px';
+                stringsRow.appendChild(smbDiv);
+
+                // Draw Wires from SMB to Target String (Horizontal)
+                // Use calculated positions and dimensions for wiring
+                const wireStartY = smbCalculatedTop + smbHeight / 2;
+                const wireStartX = smbCalculatedLeft + smbWidth; // Right edge of SMB
+                const wireEndX = targetStringBlockRect.left - stringsRowRect.left; // Left edge of string block
+                const wireWidth = Math.max(0, wireEndX - wireStartX);
+
+                if (wireWidth > 0) {
+                    const wireRed = document.createElement('div');
+                    wireRed.className = 'wire generated-smb-h-wire';
+                    wireRed.style.backgroundColor = 'red';
+                    wireRed.style.top = (wireStartY - 1.5) + 'px'; // Offset for side-by-side
+                    wireRed.style.left = wireStartX + 'px';
+                    wireRed.style.width = wireWidth + 'px';
+                    wireRed.style.height = '1px';
+                    stringsRow.appendChild(wireRed);
+
+                    const wireBlack = document.createElement('div');
+                    wireBlack.className = 'wire generated-smb-h-wire';
+                    wireBlack.style.backgroundColor = 'black';
+                    wireBlack.style.top = (wireStartY + 0.5) + 'px'; // Offset for side-by-side
+                    wireBlack.style.left = wireStartX + 'px';
+                    wireBlack.style.width = wireWidth + 'px';
+                    wireBlack.style.height = '1px';
+                    stringsRow.appendChild(wireBlack);
+                }
+            }
+        }
+
+        function connectStringsInColumns() {
+            const stringsRow = document.getElementById('strings-row');
+            if (!stringsRow) return;
+
+            const existingWires = stringsRow.querySelectorAll('.generated-v-wire');
+            existingWires.forEach(w => w.remove());
+
+            const stringItemContainers = Array.from(stringsRow.querySelectorAll('.string-item-container'));
+            if (stringItemContainers.length <= 1) return;
+
+            let itemsPerRow = stringItemContainers.length;
+            if (stringItemContainers.length > 1) {
+                const firstItemOffsetTop = stringItemContainers[0].offsetTop;
+                for (let k = 1; k < stringItemContainers.length; k++) {
+                    if (stringItemContainers[k].offsetTop > firstItemOffsetTop) {
+                        itemsPerRow = k;
+                        break;
+                    }
+                }
+            }
+            if (itemsPerRow === 0) return;
+
+            const stringsRowRect = stringsRow.getBoundingClientRect();
+
+            for (let i = 0; i < stringItemContainers.length; i++) {
+                if (i + itemsPerRow >= stringItemContainers.length) continue; // No item below
+
+                const topElementContainer = stringItemContainers[i];
+                const bottomElementContainer = stringItemContainers[i + itemsPerRow];
+
+                if (Math.abs(topElementContainer.offsetLeft - bottomElementContainer.offsetLeft) > 20) {
+                    continue;
+                }
+
+                const topBlock = topElementContainer.querySelector('.string-block');
+                const bottomBlock = bottomElementContainer.querySelector('.string-block');
+                if (!topBlock || !bottomBlock) continue;
+
+                const topBlockRect = topBlock.getBoundingClientRect();
+                const bottomBlockRect = bottomBlock.getBoundingClientRect();
+
+                const lineStartX = topBlockRect.left - stringsRowRect.left + topBlockRect.width / 2;
+                const lineStartY = topBlockRect.bottom - stringsRowRect.top;
+                const lineEndY = bottomBlockRect.top - stringsRowRect.top;
+                const lineHeight = Math.max(0, lineEndY - lineStartY);
+
+                if (lineHeight <= 0) continue;
+
+                const wireRed = document.createElement('div');
+                wireRed.className = 'wire generated-v-wire';
+                wireRed.style.backgroundColor = 'red';
+                wireRed.style.left = (lineStartX - 1.5) + 'px';
+                wireRed.style.top = lineStartY + 'px';
+                wireRed.style.height = lineHeight + 'px';
+                wireRed.style.width = '1px';
+                stringsRow.appendChild(wireRed);
+
+                const wireBlack = document.createElement('div');
+                wireBlack.className = 'wire generated-v-wire';
+                wireBlack.style.backgroundColor = 'black';
+                wireBlack.style.left = (lineStartX + 0.5) + 'px';
+                wireBlack.style.top = lineStartY + 'px';
+                wireBlack.style.height = lineHeight + 'px';
+                wireBlack.style.width = '1px';
+                stringsRow.appendChild(wireBlack);
+            }
+        }
+
+        function connectStringsInRows() {
+            const stringsRow = document.getElementById('strings-row');
+            if (!stringsRow) return;
+
+            const existingWires = stringsRow.querySelectorAll('.generated-h-wire');
+            existingWires.forEach(w => w.remove());
+
+            const stringItemContainers = Array.from(stringsRow.querySelectorAll('.string-item-container'));
+            if (stringItemContainers.length <= 1) return;
+
+            let itemsPerRow = 0;
+            if (stringItemContainers.length > 0) {
+                const firstItemOffsetTop = stringItemContainers[0].offsetTop;
+                itemsPerRow = stringItemContainers.length;
+                for (let k = 1; k < stringItemContainers.length; k++) {
+                    if (stringItemContainers[k].offsetTop > firstItemOffsetTop) {
+                        itemsPerRow = k;
+                        break;
+                    }
+                }
+            } else { return; }
+             if (itemsPerRow === 0 && stringItemContainers.length > 0) itemsPerRow = stringItemContainers.length;
+
+
+            const stringsRowRect = stringsRow.getBoundingClientRect();
+
+            for (let rowIndex = 0; rowIndex < Math.ceil(stringItemContainers.length / itemsPerRow); rowIndex++) {
+                const rowStartIndex = rowIndex * itemsPerRow;
+                const rowEndIndex = Math.min(rowStartIndex + itemsPerRow, stringItemContainers.length);
+
+                for (let i = rowStartIndex; i < rowEndIndex - 1; i++) {
+                    const leftElementContainer = stringItemContainers[i];
+                    const rightElementContainer = stringItemContainers[i + 1];
+
+                    if (leftElementContainer.offsetTop !== rightElementContainer.offsetTop) {
+                        continue; 
+                    }
+
+                    const leftBlock = leftElementContainer.querySelector('.string-block');
+                    const rightBlock = rightElementContainer.querySelector('.string-block');
+                    if (!leftBlock || !rightBlock) continue;
+
+                    const leftBlockRect = leftBlock.getBoundingClientRect();
+                    const rightBlockRect = rightBlock.getBoundingClientRect();
+
+                    const lineStartY = leftBlockRect.top - stringsRowRect.top + leftBlockRect.height / 2;
+                    const lineStartX = leftBlockRect.right - stringsRowRect.left;
+                    const lineEndX = rightBlockRect.left - stringsRowRect.left;
+                    const lineWidth = Math.max(0, lineEndX - lineStartX);
+
+                    if (lineWidth <= 0) continue;
+
+                    const wireRed = document.createElement('div');
+                    wireRed.className = 'wire generated-h-wire';
+                    wireRed.style.backgroundColor = 'red';
+                    wireRed.style.top = (lineStartY - 1.5) + 'px';
+                    wireRed.style.left = lineStartX + 'px';
+                    wireRed.style.width = lineWidth + 'px';
+                    wireRed.style.height = '1px';
+                    stringsRow.appendChild(wireRed);
+
+                    const wireBlack = document.createElement('div');
+                    wireBlack.className = 'wire generated-h-wire';
+                    wireBlack.style.backgroundColor = 'black';
+                    wireBlack.style.top = (lineStartY + 0.5) + 'px';
+                    wireBlack.style.left = lineStartX + 'px';
+                    wireBlack.style.width = lineWidth + 'px';
+                    wireBlack.style.height = '1px';
+                    stringsRow.appendChild(wireBlack);
+                }
+            }
+        }
+
+        // Function to draw a line between two points using a div
+        function drawWireElement(x1, y1, x2, y2, color, parentElement, thickness = 2, wireClassName = 'generated-general-wire') {
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            const transform = `rotate(${angle}deg)`;
+
+            const wire = document.createElement('div');
+            wire.classList.add('wire', wireClassName); // Add 'wire' for base styles, and a specific class
+            wire.style.position = 'absolute';
+            wire.style.backgroundColor = color;
+            wire.style.height = `${thickness}px`;
+            wire.style.width = `${length}px`;
+            wire.style.left = `${x1}px`;
+            wire.style.top = `${y1 - thickness / 2}px`;
+            wire.style.transform = transform;
+            wire.style.transformOrigin = '0 0'; // Rotate around the starting point
+            wire.style.zIndex = '0'; // Ensure wires are behind components
+            parentElement.appendChild(wire);
+            return wire;
+        }
+
+        function connectSmbsToInverters() { // Renamed function, DC Disconnects removed
+            const diagramContainer = document.querySelector('.diagram-container');
+            const invertersRow = document.getElementById('inverters-row');
+            const stringsRow = document.getElementById('strings-row');
+            if (!diagramContainer || !invertersRow || !stringsRow) {
+                console.error("Required containers for SMB to Inverter wiring not found.");
+                return;
+            }
+
+            // Clear previous DC disconnects (if any were drawn by mistake) and all DC wires
+            diagramContainer.querySelectorAll('.dc-disconnect-box, .generated-dc-wire').forEach(el => el.remove());
+
+            const smbElements = Array.from(stringsRow.querySelectorAll('.generated-smb'));
+            const inverterElements = Array.from(invertersRow.querySelectorAll('.inverter'));
+
+            if (smbElements.length === 0 || inverterElements.length === 0) {
+                console.warn("No SMBs or Inverters found to connect.");
+                return;
+            }
+
+            const SMBS_PER_INVERTER = 2;
+            const diagramRect = diagramContainer.getBoundingClientRect();
+            let smbCounter = 0;
+
+            for (let i = 0; i < inverterElements.length; i++) {
+                const inverter = inverterElements[i];
+                const inverterRect = inverter.getBoundingClientRect();
+                // Calculate Inverter's bottom-center attachment point relative to diagramContainer
+                const inverterAttachX = (inverterRect.left - diagramRect.left) + inverterRect.width / 2;
+                const inverterAttachY = (inverterRect.top - diagramRect.top) + inverterRect.height;
+
+                for (let j = 0; j < SMBS_PER_INVERTER; j++) {
+                    if (smbCounter >= smbElements.length || smbCounter >= (SMBS_PER_INVERTER * inverterElements.length) ) {
+                        // Stop if no more SMBs or if we've wired enough SMBs for all inverters
+                        break;
+                    }
+                    const smb = smbElements[smbCounter];
+                    const smbRect = smb.getBoundingClientRect();
+                    // Calculate SMB's top-center attachment point relative to diagramContainer
+                    const smbAttachX = (smbRect.left - diagramRect.left) + smbRect.width / 2;
+                    const smbAttachY = smbRect.top - diagramRect.left; // Corrected: smbRect.top - diagramRect.top
+                    
+                    const wireColor = '#444'; // Dark grey for DC wires
+                    const wireThickness = 2;
+                    const wireClass = 'generated-dc-wire'; // Use this class for easy clearing
+
+                    // Draw direct line from SMB top-center to Inverter bottom-center
+                    // Commented out to remove grey DC wiring as requested
+                    /*
+                    drawWireElement(
+                        smbAttachX,
+                        smbAttachY,
+                        inverterAttachX,
+                        inverterAttachY,
+                        wireColor,
+                        diagramContainer,
+                        wireThickness,
+                        wireClass
+                    );
+                    */
+                    smbCounter++;
+                }
+                if (smbCounter >= (SMBS_PER_INVERTER * inverterElements.length)) {
+                     // Stop outer loop if all designated SMBs have been wired
+                    break;
+                }
+            }
+        }
+
+        function connectInvertersToTransformerViaAcBusbar() {
+            const diagramContainer = document.querySelector('.diagram-container');
+            const invertersRow = document.getElementById('inverters-row');
+            const transformerElement = diagramContainer.querySelector('.transformer');
+            if (!diagramContainer || !invertersRow || !transformerElement) {
+                console.error("Required elements for AC busbar wiring not found.");
+                return;
+            }
+
+            // Clear previous AC busbar and its wires
+            diagramContainer.querySelectorAll('.ac-busbar, .generated-ac-wire').forEach(el => el.remove());
+
+            const inverterElements = Array.from(invertersRow.querySelectorAll('.inverter'));
+            if (inverterElements.length === 0) {
+                console.warn("No Inverters found to connect to AC busbar.");
+                return;
+            }
+
+            const diagramRect = diagramContainer.getBoundingClientRect();
+            const transformerRect = transformerElement.getBoundingClientRect();
+
+            // --- AC Busbar Positioning ---
+            // It should span horizontally across the inverters and be positioned between inverters and transformer.
+            const firstInverterRect = inverterElements[0].getBoundingClientRect();
+            const lastInverterRect = inverterElements[inverterElements.length - 1].getBoundingClientRect();
+
+            const busbarLeft = firstInverterRect.left - diagramRect.left;
+            const busbarRight = lastInverterRect.right - diagramRect.left;
+            const busbarWidth = busbarRight - busbarLeft;
+
+            // Position busbar vertically between bottom of inverters and top of transformer (closer to inverters)
+            const avgInverterBottom = (firstInverterRect.bottom - diagramRect.top + lastInverterRect.bottom - diagramRect.top) / 2;
+            const transformerTop = transformerRect.top - diagramRect.top;
+            // Place it about 1/3 of the way down from inverters to transformer
+            const busbarTop = avgInverterBottom + (transformerTop - avgInverterBottom) * 0.25; 
+
+            const acBusbarDiv = document.createElement('div');
+            acBusbarDiv.className = 'ac-busbar';
+            acBusbarDiv.style.left = `${busbarLeft}px`;
+            acBusbarDiv.style.top = `${busbarTop}px`;
+            acBusbarDiv.style.width = `${busbarWidth}px`;
+            diagramContainer.appendChild(acBusbarDiv);
+
+            const wireColor = '#E74C3C'; // Reddish color for AC lines
+            const wireThickness = 2;
+            const wireClass = 'generated-ac-wire';
+
+            // --- Connect Inverters to AC Busbar ---
+            inverterElements.forEach(inverter => {
+                const invRect = inverter.getBoundingClientRect();
+                const invTopCenterX = (invRect.left - diagramRect.left) + invRect.width / 2;
+                const invTopCenterY = invRect.top - diagramRect.top; // Top edge of inverter
+
+                // Connection point on the busbar will be directly above the inverter
+                const busbarAttachX = invTopCenterX;
+                const busbarAttachY = busbarTop + (acBusbarDiv.offsetHeight / 2); // Center of busbar height
+                
+                // We want to connect inverter top to busbar top edge or center depending on visual
+                // For simplicity, let's target the top edge of the busbar for now
+                drawWireElement(invTopCenterX, invTopCenterY, busbarAttachX, busbarTop, wireColor, diagramContainer, wireThickness, wireClass);
+            });
+
+            // --- Connect AC Busbar to Transformer ---
+            const busbarCenterY = busbarTop + (acBusbarDiv.offsetHeight / 2);
+            const busbarMidX = busbarLeft + busbarWidth / 2;
+            const transformerBottomCenterX = (transformerRect.left - diagramRect.left) + transformerRect.width / 2;
+            const transformerBottomCenterY = transformerRect.bottom - diagramRect.top; // Bottom edge of transformer
+
+            // Connecting busbar center to transformer bottom center (visually this should be top center of transformer)
+            const transformerTopCenterY = transformerRect.top - diagramRect.top;
+
+            // Wiring to transformer removed as requested
+
+            // Hide the generic connection line that was previously between inverters and transformer
+            const oldConnectionLine = document.getElementById('inverter-to-transformer-line');
+            if (oldConnectionLine) {
+                oldConnectionLine.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>

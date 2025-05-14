@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inverters - 7Hills Solar Plant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://assets.ratedpower.com/1710420234-solar-inverter.jpg?auto=format&dpr=0.28&w=4740');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateX(-3px);
+        }
+
+        .header-title {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            border-left: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .menu-title {
+            color: #4CAF50;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .menu-item {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item:hover {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .menu-item i {
+            width: 20px;
+        }
+        .parameter-category {
+            margin-bottom: 2rem;
+        }
+
+        .parameter-category h2 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            font-size: 1.5rem;
+        }
+
+        .parameters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .parameter-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .parameter-card:hover {
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .parameter-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .parameter-value {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="login.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </a>
+                </div>
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <h1 class="header-title" style="margin-bottom: 0.25rem;">Inverter Analytics</h1>
+            <p style="text-align: center; color: #fff; font-size: 1.2rem; margin-top: 0.25rem; margin-bottom: 0.5rem;">Each Inverter Capacity: 1500kW</p>
+            <div class="inverter-buttons" style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">
+                <button style="padding: 0.5rem 1rem; margin: 0 0.5rem; background-color: rgba(76, 175, 80, 0.7); color: white; border: 1px solid #4CAF50; border-radius: 5px; cursor: pointer;">Inverter 1</button>
+                <button style="padding: 0.5rem 1rem; margin: 0 0.5rem; background-color: rgba(76, 175, 80, 0.7); color: white; border: 1px solid #4CAF50; border-radius: 5px; cursor: pointer;">Inverter 2</button>
+                <button style="padding: 0.5rem 1rem; margin: 0 0.5rem; background-color: rgba(76, 175, 80, 0.7); color: white; border: 1px solid #4CAF50; border-radius: 5px; cursor: pointer;">Inverter 3</button>
+                <button style="padding: 0.5rem 1rem; margin: 0 0.5rem; background-color: rgba(76, 175, 80, 0.7); color: white; border: 1px solid #4CAF50; border-radius: 5px; cursor: pointer;">Inverter 4</button>
+                <button style="padding: 0.5rem 1rem; margin: 0 0.5rem; background-color: rgba(76, 175, 80, 0.7); color: white; border: 1px solid #4CAF50; border-radius: 5px; cursor: pointer;">Inverter 5</button>
+            </div>
+        </div>
+
+        <div class="menu" id="menu">
+            <div class="menu-header">
+                <div class="menu-title">Menu</div>
+                <button class="close-btn" onclick="toggleMenu()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="menu-items">
+                <a href="login.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="solar_panels.html" class="menu-item">
+                    <i class="fas fa-solar-panel"></i>
+                    Solar Panels
+                </a>
+                <a href="inverters.html" class="menu-item">
+                    <i class="fas fa-bolt"></i>
+                    Inverters
+                </a>
+                <a href="mfm.html" class="menu-item">
+                    <i class="fas fa-microchip"></i>
+                    MFMs
+                </a>
+                <a href="weather.html" class="menu-item">
+                    <i class="fas fa-cloud-sun"></i>
+                    Weather
+                </a>
+                <a href="alerts.html" class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    Alerts
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+        </div>
+
+        <div class="inverter-data-container" style="margin-top: 2rem;">
+            <!-- Input DC Side -->
+            <div class="parameter-category">
+                <h2>Input DC Side</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Array Input Power</div>
+                        <div class="parameter-value" id="array-input-power-value">-- kW</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Avg DC Voltage</div>
+                        <div class="parameter-value" id="avg-dc-voltage-value">-- V</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total DC Current</div>
+                        <div class="parameter-value" id="total-dc-current-value">-- A</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid AC Output - Voltage & Current -->
+            <div class="parameter-category">
+                <h2>Grid AC Output - Voltage & Current</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Grid AB Voltage</div>
+                        <div class="parameter-value" id="grid-ab-voltage-value">-- V</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Grid BC Voltage</div>
+                        <div class="parameter-value" id="grid-bc-voltage-value">-- V</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Grid CA Voltage</div>
+                        <div class="parameter-value" id="grid-ca-voltage-value">-- V</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Phase A Current</div>
+                        <div class="parameter-value" id="phase-a-current-value">-- A</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Phase B Current</div>
+                        <div class="parameter-value" id="phase-b-current-value">-- A</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Phase C Current</div>
+                        <div class="parameter-value" id="phase-c-current-value">-- A</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid AC Output - Power & Grid Parameters -->
+            <div class="parameter-category">
+                <h2>Grid AC Output - Power & Grid Parameters</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Active Power</div>
+                        <div class="parameter-value" id="active-power-value">-- kW</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Reactive Power</div>
+                        <div class="parameter-value" id="reactive-power-value">-- kVAR</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Apparent Power</div>
+                        <div class="parameter-value" id="apparent-power-value">-- kVA</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Power Factor</div>
+                        <div class="parameter-value" id="power-factor-value">--</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Grid Frequency</div>
+                        <div class="parameter-value" id="grid-frequency-value">-- Hz</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance & Generation -->
+            <div class="parameter-category">
+                <h2>Performance & Generation</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Daily Power Generation</div>
+                        <div class="parameter-value" id="daily-power-generation-value">-- kWh</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total Power Generation</div>
+                        <div class="parameter-value" id="total-power-generation-value">-- kWh</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Daily Operating Time</div>
+                        <div class="parameter-value" id="daily-operating-time-value">-- min</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">Total Operating Time</div>
+                        <div class="parameter-value" id="total-operating-time-value">-- hrs</div>
+                    </div>
+                    <div class="parameter-card">
+                        <div class="parameter-label">CO2 Reduction</div>
+                        <div class="parameter-value" id="co2-reduction-value">-- kg</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internal Status -->
+            <div class="parameter-category">
+                <h2>Internal Status</h2>
+                <div class="parameters-grid">
+                    <div class="parameter-card">
+                        <div class="parameter-label">Cabinet Temperature</div>
+                        <div class="parameter-value" id="cabinet-temp-value">-- °C</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu functionality
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // --- START: Accumulated State Variables & Constants ---
+        let totalEnergyAccumulator_kWh = 0;
+        let dailyEnergyAccumulator_kWh = 0;
+        let lastEnergyCalcTime = null; // Will be a Date object, tracks time for accumulation intervals
+        let lastEnergyCalcDayOfMonth = null; // Stores the numeric day of the month for runtime midnight check
+        
+        const siteStartDate = new Date(2025, 4, 1, 6, 0, 0); // Month 5 is June
+        const DAILY_OPERATING_HOURS = 12;
+        const OPERATING_START_HOUR = 6;
+        const OPERATING_END_HOUR = 18;
+        // --- END: Accumulated State Variables & Constants ---
+
+        // --- START: Current Daily Operating Time Calculation (Revised) ---
+        function calculateCurrentDailyOperatingMinutes(currentTime) {
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+
+            if (currentHour >= OPERATING_START_HOUR && currentHour < OPERATING_END_HOUR) {
+                return (currentHour - OPERATING_START_HOUR) * 60 + currentMinute;
+            } else {
+                return 0;
+            }
+        }
+        // --- END: Current Daily Operating Time Calculation (Revised) ---
+
+        // --- START: New Total Operating Time Calculation Logic ---
+        function calculateTotalOperatingHours(currentTime, siteStartDateTimeRef) {
+            if (!currentTime || !siteStartDateTimeRef || currentTime.getTime() < siteStartDateTimeRef.getTime()) {
+                return 0;
+            }
+
+            let totalOpHours = 0;
+            const msPerHour = 1000 * 60 * 60;
+
+            let iterDate = new Date(siteStartDateTimeRef.getFullYear(), siteStartDateTimeRef.getMonth(), siteStartDateTimeRef.getDate());
+            iterDate.setHours(0, 0, 0, 0);
+
+            const currentDayFloor = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+            currentDayFloor.setHours(0,0,0,0);
+
+            while(iterDate.getTime() <= currentDayFloor.getTime()){
+                let dayOperationalStartMs;
+                let dayOperationalEndMs;
+
+                const dayWindowStartMs = new Date(iterDate.getFullYear(), iterDate.getMonth(), iterDate.getDate(), OPERATING_START_HOUR, 0, 0, 0).getTime();
+                const dayWindowEndMs = new Date(iterDate.getFullYear(), iterDate.getMonth(), iterDate.getDate(), OPERATING_END_HOUR, 0, 0, 0).getTime();
+
+                if (iterDate.toDateString() === siteStartDateTimeRef.toDateString()) {
+                    dayOperationalStartMs = Math.max(siteStartDateTimeRef.getTime(), dayWindowStartMs);
+                } else {
+                    dayOperationalStartMs = dayWindowStartMs;
+                }
+
+                if (iterDate.toDateString() === currentTime.toDateString()) {
+                    dayOperationalEndMs = Math.min(currentTime.getTime(), dayWindowEndMs);
+                } else {
+                    dayOperationalEndMs = dayWindowEndMs;
+                }
+                
+                if (dayOperationalEndMs > dayOperationalStartMs) {
+                    totalOpHours += (dayOperationalEndMs - dayOperationalStartMs) / msPerHour;
+                }
+                
+                if (iterDate.getTime() >= currentDayFloor.getTime()) {
+                    break;
+                }
+                iterDate.setDate(iterDate.getDate() + 1);
+            }
+            return Math.max(0, totalOpHours);
+        }
+        // --- END: New Total Operating Time Calculation Logic ---
+
+        // --- START: PV Calculation Logic ---
+        const WEATHER_API_KEY = 'd09e3f6cf27f9110507e1a88f3bab5c8';
+        const LATITUDE = 13.6807;
+        const LONGITUDE = 79.3509;
+
+        const PV_RATED_POWER = 325;
+        const Vmp = 37.7;
+        const Imp = 8.89;
+        const NMOT = 42;
+        const TEMP_COEFF_PMAX = -0.0043;
+        const TEMP_COEFF_VOC = -0.0028;
+        const MODULES_PER_STRING = 40;
+        const NUM_STRINGS_PER_INVERTER = 120;
+        const CO2_REDUCTION_GRAMS_PER_KWH = 41;
+
+        function calculateCellTemperature(ambientTemp, irradiance, windSpeed) {
+            const deltaT = (NMOT - 20) / 800 * irradiance;
+            return ambientTemp + deltaT;
+        }
+
+        function calculateStringOutput(irradiance, cellTemperature) {
+            if (irradiance <= 0) {
+                return { power: 0, voltage: 0, current: 0 };
+            }
+            const temperatureDifference = cellTemperature - 25;
+            const voltageTempLoss = 1 + (TEMP_COEFF_VOC * temperatureDifference);
+            const irradianceRatio = irradiance / 1000;
+            
+            let irradianceFactor;
+            if (irradianceRatio >= 1.0) irradianceFactor = 1.0;
+            else if (irradianceRatio >= 0.5) irradianceFactor = 0.5 + (irradianceRatio - 0.5) * 0.5;
+            else irradianceFactor = 0.1 + (irradianceRatio - 0.1) * 0.4;
+            
+            const effectiveVoltagePerModule = Vmp * voltageTempLoss * irradianceFactor;
+            const stringVoltage = effectiveVoltagePerModule * MODULES_PER_STRING;
+
+            const powerTempLoss = 1 + (TEMP_COEFF_PMAX * temperatureDifference);
+            const effectivePowerPerModule = PV_RATED_POWER * irradianceRatio * powerTempLoss;
+            const stringPowerW = effectivePowerPerModule * MODULES_PER_STRING;
+            const stringCurrent = Imp * irradianceRatio;
+
+            return { power: stringPowerW, voltage: stringVoltage, current: stringCurrent };
+        }
+
+        function updateInverterDisplay(powerKW, avgDCV, totalDCCurrent, gridABV, gridBCV, gridCAV, phaseAC, phaseBC, phaseCC, activeP, reactiveP, apparentP, pFactor, gridFreq, cabinetT, dailyPGen, totalPGen, co2Red, dailyOpMin, totalOpHrs) {
+            document.getElementById('array-input-power-value').textContent = `${powerKW.toFixed(4)} kW`;
+            document.getElementById('avg-dc-voltage-value').textContent = `${avgDCV.toFixed(1)} V`;
+            document.getElementById('total-dc-current-value').textContent = `${totalDCCurrent.toFixed(5)} A`;
+            document.getElementById('grid-ab-voltage-value').textContent = `${gridABV.toFixed(1)} V`;
+            document.getElementById('grid-bc-voltage-value').textContent = `${gridBCV.toFixed(1)} V`;
+            document.getElementById('grid-ca-voltage-value').textContent = `${gridCAV.toFixed(1)} V`;
+            document.getElementById('phase-a-current-value').textContent = `${phaseAC.toFixed(2)} A`;
+            document.getElementById('phase-b-current-value').textContent = `${phaseBC.toFixed(2)} A`;
+            document.getElementById('phase-c-current-value').textContent = `${phaseCC.toFixed(2)} A`;
+            document.getElementById('active-power-value').textContent = `${activeP.toFixed(2)} kW`;
+            document.getElementById('reactive-power-value').textContent = `${reactiveP.toFixed(2)} kVAR`;
+            document.getElementById('apparent-power-value').textContent = `${apparentP.toFixed(1)} kVA`;
+            document.getElementById('power-factor-value').textContent = pFactor.toFixed(2);
+            document.getElementById('grid-frequency-value').textContent = `${gridFreq.toFixed(2)} Hz`;
+            document.getElementById('cabinet-temp-value').textContent = `${cabinetT.toFixed(2)} °C`;
+            document.getElementById('daily-power-generation-value').textContent = `${dailyPGen.toFixed(1)} kWh`;
+            document.getElementById('total-power-generation-value').textContent = `${totalPGen.toFixed(1)} kWh`;
+            document.getElementById('co2-reduction-value').textContent = `${co2Red.toFixed(1)} kg`;
+            document.getElementById('daily-operating-time-value').textContent = `${Math.round(dailyOpMin)} min`;
+            document.getElementById('total-operating-time-value').textContent = `${totalOpHrs.toFixed(1)} hrs`;
+        }
+        
+        async function fetchWeatherAndCalculateInverterData() {
+            try {
+                const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${LATITUDE}&lon=${LONGITUDE}&appid=${WEATHER_API_KEY}&units=metric`);
+                if (!weatherResponse.ok) throw new Error(`HTTP error! status: ${weatherResponse.status}`);
+                const weatherData = await weatherResponse.json();
+
+                const ambientTemperature = weatherData.main.temp;
+                const windSpeed = weatherData.wind.speed;
+
+                const now = new Date(); 
+                const istOffset = 5.5 * 60 * 60 * 1000;
+                const istTimeEpoch = now.getTime() + istOffset;
+                const dateForIST = new Date(istTimeEpoch);
+                const hourIST = dateForIST.getUTCHours();
+                const minuteIST = dateForIST.getUTCMinutes();
+                const timeOfDayIST = hourIST + minuteIST / 60;
+
+                let timeOfDayFactor = 0;
+                if (timeOfDayIST >= OPERATING_START_HOUR && timeOfDayIST < OPERATING_END_HOUR) {
+                    timeOfDayFactor = Math.sin(Math.PI * (timeOfDayIST - OPERATING_START_HOUR) / DAILY_OPERATING_HOURS);
+                }
+                const irradiance = 1000 * timeOfDayFactor;
+
+                const cellTemp = calculateCellTemperature(ambientTemperature, irradiance, windSpeed);
+                const stringOutput = calculateStringOutput(irradiance, cellTemp);
+
+                const baseTotalArrayPowerKW = (stringOutput.power * NUM_STRINGS_PER_INVERTER) / 1000;
+                const baseAvgDCVoltage = stringOutput.voltage;
+                const baseTotalDcCurrent = stringOutput.current * NUM_STRINGS_PER_INVERTER;
+                const baseActivePower = baseTotalArrayPowerKW * 0.98;
+                
+                const currentTime = new Date(); 
+
+                if (lastEnergyCalcTime) { // Ensure lastEnergyCalcTime is initialized
+                    const timeElapsed_hours = (currentTime.getTime() - lastEnergyCalcTime.getTime()) / (1000 * 60 * 60);
+                    if (timeElapsed_hours > 0) {
+                        const energyGenerated_kWh = baseActivePower * timeElapsed_hours;
+
+                        if (currentTime.getDate() !== lastEnergyCalcDayOfMonth) {
+                            dailyEnergyAccumulator_kWh = 0; 
+                            lastEnergyCalcDayOfMonth = currentTime.getDate();
+                            const currentDateStrForStorage = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}`;
+                            localStorage.setItem('lastEnergyCalcDate_str', currentDateStrForStorage);
+                        }
+                        dailyEnergyAccumulator_kWh += energyGenerated_kWh;
+                        totalEnergyAccumulator_kWh += energyGenerated_kWh;
+
+                        localStorage.setItem('totalEnergyAccumulator_kWh', totalEnergyAccumulator_kWh.toString());
+                        localStorage.setItem('dailyEnergyAccumulator_kWh', dailyEnergyAccumulator_kWh.toString());
+                    }
+                }
+                lastEnergyCalcTime = new Date(currentTime); 
+                localStorage.setItem('lastEnergyCalcTime_ts', lastEnergyCalcTime.getTime().toString());
+                
+                const baseGridAbVoltage = baseAvgDCVoltage * 2.2;
+                const baseGridBcVoltage = baseAvgDCVoltage * 2.2;
+                const baseGridCaVoltage = baseAvgDCVoltage * 2.2;
+                const basePhaseACurrent = baseTotalDcCurrent / 3;
+                const basePhaseBCurrent = baseTotalDcCurrent / 3;
+                const basePhaseCCurrent = baseTotalDcCurrent / 3;
+                const baseReactivePower = baseTotalArrayPowerKW * 0.05; 
+                const baseApparentPower = baseTotalArrayPowerKW; 
+                const basePowerFactor = 0.98; 
+                const coreGridFrequency = 50.0; 
+                const baseCabinetTemp = 30 + (baseTotalArrayPowerKW / 100); 
+                const baseDailyEnergy = dailyEnergyAccumulator_kWh;
+                const baseTotalEnergy = totalEnergyAccumulator_kWh;
+                const baseCo2Reduction_kg = (totalEnergyAccumulator_kWh * CO2_REDUCTION_GRAMS_PER_KWH) / 1000;
+                
+                const baseDailyOperatingMinutes = calculateCurrentDailyOperatingMinutes(currentTime); 
+                const baseTotalOperatingHours = calculateTotalOperatingHours(currentTime, siteStartDate);
+
+                updateInverterDisplay(
+                    baseTotalArrayPowerKW, baseAvgDCVoltage, baseTotalDcCurrent,
+                    baseGridAbVoltage, baseGridBcVoltage, baseGridCaVoltage,
+                    basePhaseACurrent, basePhaseBCurrent, basePhaseCCurrent,
+                    baseActivePower, baseReactivePower, baseApparentPower,
+                    basePowerFactor, coreGridFrequency, baseCabinetTemp,
+                    baseDailyEnergy, baseTotalEnergy, baseCo2Reduction_kg,
+                    baseDailyOperatingMinutes, baseTotalOperatingHours    
+                );
+
+            } catch (error) {
+                console.error('Error fetching weather data or calculating inverter values:', error);
+                const lastBaseCo2Reduction_kg_error = (totalEnergyAccumulator_kWh * CO2_REDUCTION_GRAMS_PER_KWH) / 1000;
+                let errorTotalOpHours = 0;
+                if (lastEnergyCalcTime) { 
+                    errorTotalOpHours = calculateTotalOperatingHours(lastEnergyCalcTime, siteStartDate);
+                }
+                updateInverterDisplay(0,0,0,0,0,0,0,0,0,0,0,0,0.98,50.0,30,
+                    dailyEnergyAccumulator_kWh, 
+                    totalEnergyAccumulator_kWh, 
+                    lastBaseCo2Reduction_kg_error, 
+                    0, errorTotalOpHours);
+            }
+        }
+        // --- END: PV Calculation Logic ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load total energy accumulator
+            const storedTotalEnergy = localStorage.getItem('totalEnergyAccumulator_kWh');
+            if (storedTotalEnergy) {
+                totalEnergyAccumulator_kWh = parseFloat(storedTotalEnergy) || 0;
+            }
+
+            const currentDate = new Date();
+            const currentDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+            
+            // Load daily energy accumulator and check for midnight reset
+            const storedDailyEnergy = localStorage.getItem('dailyEnergyAccumulator_kWh');
+            const storedLastCalcDateStr = localStorage.getItem('lastEnergyCalcDate_str');
+
+            if (storedLastCalcDateStr === currentDateStr) {
+                dailyEnergyAccumulator_kWh = parseFloat(storedDailyEnergy) || 0;
+            } else {
+                dailyEnergyAccumulator_kWh = 0; 
+                localStorage.setItem('dailyEnergyAccumulator_kWh', '0');
+            }
+            localStorage.setItem('lastEnergyCalcDate_str', currentDateStr);
+            lastEnergyCalcDayOfMonth = currentDate.getDate();
+
+            // Load or initialize lastEnergyCalcTime
+            const storedLastEnergyCalcTimeTs = localStorage.getItem('lastEnergyCalcTime_ts');
+            if (storedLastEnergyCalcTimeTs && storedLastCalcDateStr === currentDateStr) { 
+                const potentialLastCalcTime = new Date(parseInt(storedLastEnergyCalcTimeTs));
+                // Ensure loaded time isn't in the future (e.g. due to system clock changes)
+                if (potentialLastCalcTime.getTime() <= currentDate.getTime()) {
+                    lastEnergyCalcTime = potentialLastCalcTime;
+                } else {
+                    lastEnergyCalcTime = new Date(currentDate); // Fallback to current time
+                }
+            } else {
+                lastEnergyCalcTime = new Date(currentDate); // Default to current time if no valid stored time for today
+            }
+
+            fetchWeatherAndCalculateInverterData(); 
+            setInterval(fetchWeatherAndCalculateInverterData, 5000);
+
+            const inverterButtons = document.querySelectorAll('.inverter-buttons button');
+            inverterButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    inverterButtons.forEach(btn => {
+                        btn.style.backgroundColor = 'rgba(76, 175, 80, 0.7)';
+                        btn.style.borderColor = '#4CAF50';
+                    });
+                    button.style.backgroundColor = 'rgba(36, 135, 40, 0.9)';
+                    button.style.borderColor = '#2E8B57';
+                    fetchWeatherAndCalculateInverterData();
+                });
+            });
+            
+            if (inverterButtons.length > 0) {
+                inverterButtons[0].style.backgroundColor = 'rgba(36, 135, 40, 0.9)';
+                inverterButtons[0].style.borderColor = '#2E8B57';
+            }
+        });
+    </script>
+</body>
+</html>
